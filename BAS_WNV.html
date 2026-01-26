@@ -324,49 +324,104 @@
         .formatting-toolbar {
             display: flex;
             gap: 0.5rem;
-            margin-bottom: 0.5rem;
-            padding: 0.5rem;
-            background: #f8f9fa;
+            margin-bottom: 0;
+            padding: 0.5rem 0.75rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             border: 1px solid var(--border-color);
             border-bottom: none;
-            border-radius: 6px 6px 0 0;
+            border-radius: 8px 8px 0 0;
+            align-items: center;
+        }
+
+        .formatting-toolbar::before {
+            content: 'Format:';
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-right: 0.25rem;
         }
 
         .format-btn {
-            padding: 0.4rem 0.75rem;
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 0.85rem;
+            padding: 0.35rem 0.85rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+            border: none;
+            border-radius: 20px;
+            font-size: 0.8rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             gap: 0.3rem;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 112, 242, 0.2);
         }
 
         .format-btn:hover {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-            transform: none;
+            background: linear-gradient(135deg, #0056b3 0%, #2563eb 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 112, 242, 0.3);
+        }
+
+        .format-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 112, 242, 0.2);
         }
 
         .format-btn code {
             font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.8rem;
-            background: rgba(0,0,0,0.05);
-            padding: 0.1rem 0.3rem;
-            border-radius: 3px;
-        }
-
-        .format-btn:hover code {
+            font-size: 0.75rem;
             background: rgba(255,255,255,0.2);
+            padding: 0.1rem 0.4rem;
+            border-radius: 10px;
         }
 
         .textarea-with-toolbar {
             border-radius: 0 0 6px 6px;
+            border-top: none;
+        }
+
+        .rich-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0 0 6px 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            background: white;
+            overflow-y: auto;
+            resize: vertical;
+        }
+
+        .rich-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 112, 242, 0.1);
+        }
+
+        .rich-textarea:empty::before {
+            content: attr(data-placeholder);
+            color: var(--text-muted);
+        }
+
+        .rich-textarea codeph {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            border: 1px solid #fcd34d;
+        }
+
+        .rich-textarea uicontrol {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 600;
+            border: 1px solid #93c5fd;
         }
     </style>
 </head>
@@ -401,14 +456,14 @@
         <div class="form-group">
             <label>Description:</label>
             <div class="formatting-toolbar">
-                <button type="button" class="format-btn" onclick="formatText('description', 'codeph')" title="Wrap selection with &lt;codeph&gt; tag">
-                    <code>&lt;codeph&gt;</code>
+                <button type="button" class="format-btn" onclick="formatText('description', 'codeph')" title="Code/technical term">
+                    <code>codeph</code>
                 </button>
-                <button type="button" class="format-btn" onclick="formatText('description', 'uicontrol')" title="Wrap selection with &lt;uicontrol&gt; tag">
-                    <code>&lt;uicontrol&gt;</code>
+                <button type="button" class="format-btn" onclick="formatText('description', 'uicontrol')" title="UI element">
+                    <code>uicontrol</code>
                 </button>
             </div>
-            <textarea id="description" class="textarea-with-toolbar" rows="4" placeholder="Enter the main description. Select text and use buttons above to add DITA formatting."></textarea>
+            <div id="description" class="rich-textarea" contenteditable="true" data-placeholder="Enter the main description. Select text and use buttons above to add DITA formatting."></div>
             
             <div id="listItems" class="list-items">
                 <label>List Items:</label>
@@ -550,34 +605,50 @@
             addReferenceLink();
         };
 
-        function formatText(textareaId, tag) {
-            const textarea = document.getElementById(textareaId);
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const selectedText = textarea.value.substring(start, end);
+        function formatText(elementId, tag) {
+            const element = document.getElementById(elementId);
+            const selection = window.getSelection();
 
-            if (selectedText) {
-                const before = textarea.value.substring(0, start);
-                const after = textarea.value.substring(end);
-                const wrappedText = `<${tag}>${selectedText}</${tag}>`;
-                textarea.value = before + wrappedText + after;
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
 
-                // Set cursor position after the inserted text
-                const newCursorPos = start + wrappedText.length;
-                textarea.setSelectionRange(newCursorPos, newCursorPos);
-                textarea.focus();
-            } else {
-                // If no selection, insert empty tags and place cursor between them
-                const before = textarea.value.substring(0, start);
-                const after = textarea.value.substring(start);
-                const tags = `<${tag}></${tag}>`;
-                textarea.value = before + tags + after;
+                if (element.contains(range.commonAncestorContainer)) {
+                    const selectedText = range.toString();
 
-                // Place cursor between the tags
-                const cursorPos = start + tag.length + 2;
-                textarea.setSelectionRange(cursorPos, cursorPos);
-                textarea.focus();
+                    if (selectedText) {
+                        const tagElement = document.createElement(tag);
+                        tagElement.textContent = selectedText;
+                        range.deleteContents();
+                        range.insertNode(tagElement);
+                        range.setStartAfter(tagElement);
+                        range.setEndAfter(tagElement);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    } else {
+                        const tagElement = document.createElement(tag);
+                        tagElement.innerHTML = '&#8203;';
+                        range.insertNode(tagElement);
+                        range.setStart(tagElement, 0);
+                        range.setEnd(tagElement, 0);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    }
+                }
             }
+            element.focus();
+        }
+
+        function getFormattedContent(elementId) {
+            const element = document.getElementById(elementId);
+            let content = element.innerHTML;
+            content = content.replace(/<codeph>(.*?)<\/codeph>/gi, '<codeph>$1</codeph>');
+            content = content.replace(/<uicontrol>(.*?)<\/uicontrol>/gi, '<uicontrol>$1</uicontrol>');
+            content = content.replace(/<br\s*\/?>/gi, ' ');
+            content = content.replace(/<div>/gi, ' ');
+            content = content.replace(/<\/div>/gi, '');
+            content = content.replace(/&nbsp;/g, ' ');
+            content = content.replace(/\u200B/g, '');
+            return content.trim();
         }
 
         function addListItem() {
@@ -733,7 +804,7 @@
             const titleSelect = document.getElementById('titleSelect');
             const titleInput = document.getElementById('titleInput');
             const title = titleSelect.value === 'other' ? titleInput.value : titleSelect.value;
-            const description = document.getElementById('description').value;
+            const description = getFormattedContent('description');
             const action = document.getElementById('action').value;
             const lifecycle = document.getElementById('lifecycle').value;
             const type = document.getElementById('type').value;

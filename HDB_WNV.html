@@ -498,7 +498,7 @@
         }
 
         .format-btn {
-            padding: 0.35rem 0.85rem;
+            padding: 0.4rem 1rem;
             background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
             border: none;
             border-radius: 20px;
@@ -506,11 +506,9 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
             color: white;
             box-shadow: 0 2px 4px rgba(0, 112, 242, 0.2);
+            font-family: inherit;
         }
 
         .format-btn:hover {
@@ -522,14 +520,6 @@
         .format-btn:active {
             transform: translateY(0);
             box-shadow: 0 1px 2px rgba(0, 112, 242, 0.2);
-        }
-
-        .format-btn code {
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.75rem;
-            background: rgba(255,255,255,0.2);
-            padding: 0.1rem 0.4rem;
-            border-radius: 10px;
         }
 
         .textarea-with-toolbar {
@@ -546,7 +536,7 @@
             border-radius: 0 0 6px 6px;
             font-family: inherit;
             font-size: 0.95rem;
-            line-height: 1.6;
+            line-height: 1.8;
             background: white;
             overflow-y: auto;
             resize: vertical;
@@ -563,23 +553,26 @@
             color: var(--text-muted);
         }
 
-        /* DITA tag styling */
-        .rich-textarea codeph {
+        /* DITA tag styling - visible tags */
+        .rich-textarea .dita-tag {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85em;
+            border-radius: 3px;
+            padding: 0.05rem 0.3rem;
+            font-weight: 500;
+        }
+
+        .rich-textarea .dita-tag.codeph-open,
+        .rich-textarea .dita-tag.codeph-close {
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             color: #92400e;
-            padding: 0.1rem 0.4rem;
-            border-radius: 4px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.9em;
             border: 1px solid #fcd34d;
         }
 
-        .rich-textarea uicontrol {
+        .rich-textarea .dita-tag.uicontrol-open,
+        .rich-textarea .dita-tag.uicontrol-close {
             background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
             color: #1e40af;
-            padding: 0.1rem 0.4rem;
-            border-radius: 4px;
-            font-weight: 600;
             border: 1px solid #93c5fd;
         }
     </style>
@@ -703,12 +696,8 @@
                 <div class="form-group">
                     <label>Description:</label>
                     <div class="formatting-toolbar">
-                        <button type="button" class="format-btn" onclick="formatText('mainParagraph', 'codeph')" title="Code/technical term">
-                            <code>codeph</code>
-                        </button>
-                        <button type="button" class="format-btn" onclick="formatText('mainParagraph', 'uicontrol')" title="UI element">
-                            <code>uicontrol</code>
-                        </button>
+                        <button type="button" class="format-btn" onclick="formatText('mainParagraph', 'codeph')" title="Code/technical term">codeph</button>
+                        <button type="button" class="format-btn" onclick="formatText('mainParagraph', 'uicontrol')" title="UI element">uicontrol</button>
                     </div>
                     <div id="mainParagraph" class="rich-textarea" contenteditable="true" data-placeholder="Enter the main paragraph content. Select text and use buttons above to add DITA formatting."></div>
                     
@@ -848,36 +837,44 @@
             if (selection.rangeCount > 0) {
                 const range = selection.getRangeAt(0);
 
-                // Check if selection is within our element
                 if (element.contains(range.commonAncestorContainer)) {
                     const selectedText = range.toString();
 
+                    // Create opening tag span
+                    const openTag = document.createElement('span');
+                    openTag.className = `dita-tag ${tag}-open`;
+                    openTag.textContent = `<${tag}>`;
+                    openTag.contentEditable = 'false';
+
+                    // Create closing tag span
+                    const closeTag = document.createElement('span');
+                    closeTag.className = `dita-tag ${tag}-close`;
+                    closeTag.textContent = `</${tag}>`;
+                    closeTag.contentEditable = 'false';
+
                     if (selectedText) {
-                        // Create the tag element
-                        const tagElement = document.createElement(tag);
-                        tagElement.textContent = selectedText;
-
-                        // Replace selection with tagged element
+                        // Wrap selected text with visible tags
                         range.deleteContents();
-                        range.insertNode(tagElement);
+                        range.insertNode(closeTag);
+                        range.insertNode(document.createTextNode(selectedText));
+                        range.insertNode(openTag);
 
-                        // Move cursor after the inserted element
-                        range.setStartAfter(tagElement);
-                        range.setEndAfter(tagElement);
-                        selection.removeAllRanges();
-                        selection.addRange(range);
+                        // Move cursor after the closing tag
+                        range.setStartAfter(closeTag);
+                        range.setEndAfter(closeTag);
                     } else {
-                        // No selection - insert empty tag at cursor
-                        const tagElement = document.createElement(tag);
-                        tagElement.innerHTML = '&#8203;'; // Zero-width space
-                        range.insertNode(tagElement);
+                        // Insert tags at cursor with space between
+                        range.insertNode(closeTag);
+                        range.insertNode(document.createTextNode('\u200B')); // Zero-width space for cursor
+                        range.insertNode(openTag);
 
-                        // Place cursor inside the tag
-                        range.setStart(tagElement, 0);
-                        range.setEnd(tagElement, 0);
-                        selection.removeAllRanges();
-                        selection.addRange(range);
+                        // Place cursor between the tags
+                        range.setStart(closeTag.previousSibling, 0);
+                        range.setEnd(closeTag.previousSibling, 0);
                     }
+
+                    selection.removeAllRanges();
+                    selection.addRange(range);
                 }
             }
             element.focus();
@@ -886,15 +883,19 @@
         function getFormattedContent(elementId) {
             const element = document.getElementById(elementId);
             let content = element.innerHTML;
-            // Convert HTML to DITA-style tags
-            content = content.replace(/<codeph>(.*?)<\/codeph>/gi, '<codeph>$1</codeph>');
-            content = content.replace(/<uicontrol>(.*?)<\/uicontrol>/gi, '<uicontrol>$1</uicontrol>');
-            // Remove any other HTML tags and clean up
+
+            // Convert visible tag spans back to actual DITA tags
+            content = content.replace(/<span[^>]*class="dita-tag codeph-open"[^>]*>&lt;codeph&gt;<\/span>/gi, '<codeph>');
+            content = content.replace(/<span[^>]*class="dita-tag codeph-close"[^>]*>&lt;\/codeph&gt;<\/span>/gi, '</codeph>');
+            content = content.replace(/<span[^>]*class="dita-tag uicontrol-open"[^>]*>&lt;uicontrol&gt;<\/span>/gi, '<uicontrol>');
+            content = content.replace(/<span[^>]*class="dita-tag uicontrol-close"[^>]*>&lt;\/uicontrol&gt;<\/span>/gi, '</uicontrol>');
+
+            // Clean up HTML
             content = content.replace(/<br\s*\/?>/gi, ' ');
             content = content.replace(/<div>/gi, ' ');
             content = content.replace(/<\/div>/gi, '');
             content = content.replace(/&nbsp;/g, ' ');
-            content = content.replace(/\u200B/g, ''); // Remove zero-width spaces
+            content = content.replace(/\u200B/g, '');
             return content.trim();
         }
 

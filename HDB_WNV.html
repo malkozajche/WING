@@ -477,6 +477,54 @@
         .checkbox-item:first-child label:before {
             border-width: 2px;
         }
+
+        .formatting-toolbar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .format-btn {
+            padding: 0.4rem 0.75rem;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .format-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: none;
+        }
+
+        .format-btn code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.8rem;
+            background: rgba(0,0,0,0.05);
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+        }
+
+        .format-btn:hover code {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .textarea-with-toolbar {
+            border-radius: 0 0 6px 6px;
+        }
     </style>
 </head>
 <body>
@@ -519,10 +567,10 @@
                         <option value="VERSION_QRC2_2025">VERSION_QRC2_2025</option>
                         <option value="VERSION_QRC3_2025">VERSION_QRC3_2025</option>
                         <option value="VERSION_QRC4_2025">VERSION_QRC4_2025</option>
-                        <option value="VERSION_2026_QRC1" selected>VERSION_2026_QRC1</option>
-                        <option value="VERSION_2026_QRC2">VERSION_2026_QRC2</option>
-                        <option value="VERSION_2026_QRC3">VERSION_2026_QRC3</option>
-                        <option value="VERSION_2026_QRC4">VERSION_2026_QRC4</option>
+                        <option value="VERSION_QRC1_2026" selected>VERSION_QRC1_2026</option>
+                        <option value="VERSION_QRC2_2026">VERSION_QRC2_2026</option>
+                        <option value="VERSION_QRC3_2026">VERSION_QRC3_2026</option>
+                        <option value="VERSION_QRC4_2026">VERSION_QRC4_2026</option>
                         <option value="VERSION_INDEPENDENT">Version independent</option>
                         <option value="other">Other...</option>
                     </select>
@@ -597,7 +645,15 @@
 
                 <div class="form-group">
                     <label>Description:</label>
-                    <textarea id="mainParagraph" placeholder="Enter the main paragraph content" required></textarea>
+                    <div class="formatting-toolbar">
+                        <button type="button" class="format-btn" onclick="formatText('mainParagraph', 'codeph')" title="Wrap selection with &lt;codeph&gt; tag">
+                            <code>&lt;codeph&gt;</code>
+                        </button>
+                        <button type="button" class="format-btn" onclick="formatText('mainParagraph', 'uicontrol')" title="Wrap selection with &lt;uicontrol&gt; tag">
+                            <code>&lt;uicontrol&gt;</code>
+                        </button>
+                    </div>
+                    <textarea id="mainParagraph" class="textarea-with-toolbar" placeholder="Enter the main paragraph content. Select text and use buttons above to add DITA formatting." required></textarea>
                     
                     <div id="listItems" class="list-items">
                         <label>List Items (optional):</label>
@@ -669,10 +725,10 @@
                         <option value="RTC_DATE_QRC2_2025">RTC_DATE_QRC2_2025</option>
                         <option value="RTC_DATE_QRC3_2025">RTC_DATE_QRC3_2025</option>
                         <option value="RTC_DATE_QRC4_2025">RTC_DATE_QRC4_2025</option>
-                        <option value="RTC_DATE_2026_QRC1" selected>RTC_DATE_2026_QRC1</option>
-                        <option value="RTC_DATE_2026_QRC2">RTC_DATE_2026_QRC2</option>
-                        <option value="RTC_DATE_2026_QRC3">RTC_DATE_2026_QRC3</option>
-                        <option value="RTC_DATE_2026_QRC4">RTC_DATE_2026_QRC4</option>
+                        <option value="RTC_DATE_QRC1_2026" selected>RTC_DATE_QRC1_2026</option>
+                        <option value="RTC_DATE_QRC2_2026">RTC_DATE_QRC2_2026</option>
+                        <option value="RTC_DATE_QRC3_2026">RTC_DATE_QRC3_2026</option>
+                        <option value="RTC_DATE_QRC4_2026">RTC_DATE_QRC4_2026</option>
                         <option value="other">Other...</option>
                     </select>
                     <input type="text" id="rtcDateInput" placeholder="Enter custom RTC date">
@@ -728,6 +784,36 @@
         // Add initial reference link
         addReferenceLink();
 
+        function formatText(textareaId, tag) {
+            const textarea = document.getElementById(textareaId);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+
+            if (selectedText) {
+                const before = textarea.value.substring(0, start);
+                const after = textarea.value.substring(end);
+                const wrappedText = `<${tag}>${selectedText}</${tag}>`;
+                textarea.value = before + wrappedText + after;
+
+                // Set cursor position after the inserted text
+                const newCursorPos = start + wrappedText.length;
+                textarea.setSelectionRange(newCursorPos, newCursorPos);
+                textarea.focus();
+            } else {
+                // If no selection, insert empty tags and place cursor between them
+                const before = textarea.value.substring(0, start);
+                const after = textarea.value.substring(start);
+                const tags = `<${tag}></${tag}>`;
+                textarea.value = before + tags + after;
+
+                // Place cursor between the tags
+                const cursorPos = start + tag.length + 2;
+                textarea.setSelectionRange(cursorPos, cursorPos);
+                textarea.focus();
+            }
+        }
+
         function handleFeatureSelect() {
             const select = document.getElementById('featureSelect');
             const input = document.getElementById('featureInput');
@@ -747,17 +833,17 @@
                     versionSelect.value = 'VERSION_QRC4_2025';
                     rtcDateSelect.value = 'RTC_DATE_QRC4_2025';
                 } else if (select.value === 'HDB_WNV_2026_QRC1') {
-                    versionSelect.value = 'VERSION_2026_QRC1';
-                    rtcDateSelect.value = 'RTC_DATE_2026_QRC1';
+                    versionSelect.value = 'VERSION_QRC1_2026';
+                    rtcDateSelect.value = 'RTC_DATE_QRC1_2026';
                 } else if (select.value === 'HDB_WNV_2026_QRC2') {
-                    versionSelect.value = 'VERSION_2026_QRC2';
-                    rtcDateSelect.value = 'RTC_DATE_2026_QRC2';
+                    versionSelect.value = 'VERSION_QRC2_2026';
+                    rtcDateSelect.value = 'RTC_DATE_QRC2_2026';
                 } else if (select.value === 'HDB_WNV_2026_QRC3') {
-                    versionSelect.value = 'VERSION_2026_QRC3';
-                    rtcDateSelect.value = 'RTC_DATE_2026_QRC3';
+                    versionSelect.value = 'VERSION_QRC3_2026';
+                    rtcDateSelect.value = 'RTC_DATE_QRC3_2026';
                 } else if (select.value === 'HDB_WNV_2026_QRC4') {
-                    versionSelect.value = 'VERSION_2026_QRC4';
-                    rtcDateSelect.value = 'RTC_DATE_2026_QRC4';
+                    versionSelect.value = 'VERSION_QRC4_2026';
+                    rtcDateSelect.value = 'RTC_DATE_QRC4_2026';
                 }
             }
         }

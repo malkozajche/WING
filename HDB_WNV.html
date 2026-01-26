@@ -518,7 +518,11 @@
                     <select id="versionSelect" onchange="handleVersionSelect()">
                         <option value="VERSION_QRC2_2025">VERSION_QRC2_2025</option>
                         <option value="VERSION_QRC3_2025">VERSION_QRC3_2025</option>
-                        <option value="VERSION_QRC4_2025" selected>VERSION_QRC4_2025</option>
+                        <option value="VERSION_QRC4_2025">VERSION_QRC4_2025</option>
+                        <option value="VERSION_2026_QRC1" selected>VERSION_2026_QRC1</option>
+                        <option value="VERSION_2026_QRC2">VERSION_2026_QRC2</option>
+                        <option value="VERSION_2026_QRC3">VERSION_2026_QRC3</option>
+                        <option value="VERSION_2026_QRC4">VERSION_2026_QRC4</option>
                         <option value="VERSION_INDEPENDENT">Version independent</option>
                         <option value="other">Other...</option>
                     </select>
@@ -664,7 +668,11 @@
                     <select id="rtcDateSelect" onchange="handleRtcDateSelect()">
                         <option value="RTC_DATE_QRC2_2025">RTC_DATE_QRC2_2025</option>
                         <option value="RTC_DATE_QRC3_2025">RTC_DATE_QRC3_2025</option>
-                        <option value="RTC_DATE_QRC4_2025" selected>RTC_DATE_QRC4_2025</option>
+                        <option value="RTC_DATE_QRC4_2025">RTC_DATE_QRC4_2025</option>
+                        <option value="RTC_DATE_2026_QRC1" selected>RTC_DATE_2026_QRC1</option>
+                        <option value="RTC_DATE_2026_QRC2">RTC_DATE_2026_QRC2</option>
+                        <option value="RTC_DATE_2026_QRC3">RTC_DATE_2026_QRC3</option>
+                        <option value="RTC_DATE_2026_QRC4">RTC_DATE_2026_QRC4</option>
                         <option value="other">Other...</option>
                     </select>
                     <input type="text" id="rtcDateInput" placeholder="Enter custom RTC date">
@@ -738,6 +746,18 @@
                 } else if (select.value === 'HDB_WNV_QRC4_2025') {
                     versionSelect.value = 'VERSION_QRC4_2025';
                     rtcDateSelect.value = 'RTC_DATE_QRC4_2025';
+                } else if (select.value === 'HDB_WNV_2026_QRC1') {
+                    versionSelect.value = 'VERSION_2026_QRC1';
+                    rtcDateSelect.value = 'RTC_DATE_2026_QRC1';
+                } else if (select.value === 'HDB_WNV_2026_QRC2') {
+                    versionSelect.value = 'VERSION_2026_QRC2';
+                    rtcDateSelect.value = 'RTC_DATE_2026_QRC2';
+                } else if (select.value === 'HDB_WNV_2026_QRC3') {
+                    versionSelect.value = 'VERSION_2026_QRC3';
+                    rtcDateSelect.value = 'RTC_DATE_2026_QRC3';
+                } else if (select.value === 'HDB_WNV_2026_QRC4') {
+                    versionSelect.value = 'VERSION_2026_QRC4';
+                    rtcDateSelect.value = 'RTC_DATE_2026_QRC4';
                 }
             }
         }

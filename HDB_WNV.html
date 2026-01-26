@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAP HANA What's New XML Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-solarizedlight.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0070f2;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --border-color: #e9ecef;
+            --text-color: #212529;
+            --text-muted: #6c757d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--card-background);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+
+        .title-container {
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: #000000;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .form-group {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 112, 242, 0.1);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        .feature-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .feature-container select,
+        .feature-container input {
+            flex: 1;
+        }
+
+        .toggle-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            white-space: nowrap;
+        }
+
+        .toggle-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .add-btn {
+            background-color: var(--success-color);
+            color: white;
+            min-width: 150px;
+            margin-bottom: 1rem;
+        }
+
+        .add-btn:hover {
+            background-color: #218838;
+        }
+
+        .remove-btn {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            min-width: 120px;
+            white-space: nowrap;
+        }
+
+        .remove-btn:hover {
+            background-color: #c82333;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .controls-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .divider {
+            width: 1px;
+            background: var(--border-color);
+            margin: 0 1rem;
+        }
+
+        .list-items {
+            margin: 1rem 0;
+        }
+
+        .list-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            align-items: center;
+        }
+
+        .output-section {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        #xmlOutput {
+            padding: 15px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            background: transparent !important;
+        }
+
+        .output-section label {
+            margin-bottom: 15px;
+        }
+
+        pre[class*="language-"], 
+        code[class*="language-"] {
+            background: transparent !important;
+            color: #2a2a2a !important;
+        }
+
+        .token.tag {
+            color: #22863a !important;
+        }
+        .token.attr-name {
+            color: #6f42c1 !important;
+        }
+        .token.attr-value {
+            color: #032f62 !important;
+        }
+        .token.string {
+            color: #032f62 !important;
+        }
+
+        .copy-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #28a745;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .copy-indicator.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .feature-container {
+                flex-direction: column;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .controls button {
+                width: 100%;
+            }
+        }
+
+        #featureInput {
+            display: none;
+        }
+
+        #featureInput.show {
+            display: block;
+            margin-top: 10px;
+        }
+
+        .entry-container {
+            margin-bottom: 10px;
+        }
+        .entry-container input {
+            display: none;
+            margin-top: 10px;
+        }
+        .entry-container input.show {
+            display: block;
+        }
+
+        .reference-links {
+            margin-top: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .reference-link-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            align-items: center;
+        }
+
+        .reference-link-inputs {
+            flex: 1;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .reference-link-inputs input {
+            flex: 1;
+        }
+
+        .title-section {
+            margin-bottom: 1rem;
+        }
+
+        .home-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background-color: #0070f2;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .home-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .home-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .add-to-wnv-btn {
+            background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .add-to-wnv-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .add-to-wnv-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .checkbox-item:hover {
+            background-color: rgba(0, 112, 242, 0.05);
+        }
+
+        /* Hide default checkbox */
+        .checkbox-item input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            width: 0;
+            height: 0;
+        }
+
+        /* Custom checkbox design */
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            position: relative;
+            user-select: none;
+            padding-left: 2rem;
+            line-height: 1.4;
+        }
+
+        /* Checkbox appearance */
+        .checkbox-item label:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            background: white;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Checkmark */
+        .checkbox-item label:after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%) rotate(45deg) scale(0);
+            width: 6px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transition: all 0.2s cubic-bezier(0.23, 1, 0.320, 1);
+            opacity: 0;
+        }
+
+        /* Checked state */
+        .checkbox-item input[type="checkbox"]:checked + label:before {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .checkbox-item input[type="checkbox"]:checked + label:after {
+            opacity: 1;
+            transform: translateY(-50%) rotate(45deg) scale(1);
+        }
+
+        /* Hover effects */
+        .checkbox-item:hover input[type="checkbox"]:not(:checked) + label:before {
+            border-color: var(--primary-color);
+            background: rgba(0, 112, 242, 0.05);
+        }
+
+        /* Focus state for accessibility */
+        .checkbox-item input[type="checkbox"]:focus + label:before {
+            box-shadow: 0 0 0 3px rgba(0, 112, 242, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        /* Special styling for "Select All" */
+        .checkbox-item:first-child {
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 0.25rem;
+            padding-bottom: 0.75rem;
+        }
+
+        .checkbox-item:first-child label {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .checkbox-item:first-child label:before {
+            border-width: 2px;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/>
+        </svg>
+        Home
+    </a>
+    <div class="container">
+        <h1>SAP HANA What's New XML Generator</h1>
+        
+        <form id="xmlForm">
+            <div class="form-group">
+                <label for="feature">Feature ID:</label>
+                <select id="featureSelect" onchange="handleFeatureSelect()">
+                    <option value="HDB_WNV_QRC2_2025">HDB_WNV_QRC2_2025</option>
+                    <option value="HDB_WNV_QRC3_2025">HDB_WNV_QRC3_2025</option>
+                    <option value="HDB_WNV_QRC4_2025" selected>HDB_WNV_QRC4_2025</option>
+                    <option value="other">Other...</option>
+                </select>
+                <input type="text" id="featureInput" placeholder="Enter custom Feature ID">
+            </div>
+
+            <div class="form-group">
+                <label>Component:</label>
+                <select id="component" onchange="handleComponentSelect()">
+                    <option value="COMP_HANA_DB">SAP HANA Database</option>
+                    <option value="COMP_HANA_CLOUD">SAP HANA Cloud</option>
+                    <option value="COMP_DL">Data Lake</option>                    
+                </select>
+                
+                <div class="entry-container">
+                    <label>Version:</label>
+                    <select id="versionSelect" onchange="handleVersionSelect()">
+                        <option value="VERSION_QRC2_2025">VERSION_QRC2_2025</option>
+                        <option value="VERSION_QRC3_2025">VERSION_QRC3_2025</option>
+                        <option value="VERSION_QRC4_2025" selected>VERSION_QRC4_2025</option>
+                        <option value="VERSION_INDEPENDENT">Version independent</option>
+                        <option value="other">Other...</option>
+                    </select>
+                    <input type="text" id="versionInput" placeholder="Enter custom version">
+                </div>
+
+                <div class="entry-container">
+                    <label>Area:</label>
+                    <select id="areaSelect">
+                        <option value="AREA_ADMIN" selected>Administration</option>
+                        <option value="AREA_DEV">Development</option>
+                        <option value="AREA_DOC">Documentation</option>
+                        <option value="AREA_MIGRATION">Migration</option>
+                        <option value="AREA_MONITORING">Monitoring</option>
+                        <option value="AREA_PROV">Provisioning</option>
+                        <option value="AREA_REF">Reference</option>
+                        <option value="AREA_SECURITY">Security</option>
+                        <option value="AREA_TROUBLE">Troubleshooting</option>
+                    </select>
+                </div>
+
+                <div class="entry-container">
+                    <label>Category:</label>
+                    <select id="entry4Select" onchange="handleEntrySelect(4)">
+                        <option value="Administration">Administration</option>
+                        <option value="Alerts and Notifications" selected>Alerts and Notifications</option>
+                        <option value="Auditing">Auditing</option>
+                        <option value="Authentication">Authentication</option>
+                        <option value="Authorization">Authorization</option>
+                        <option value="Automated Predictive Library">Automated Predictive Library</option>
+                        <option value="Backup and Recovery">Backup and Recovery</option>
+                        <option value="Data Lake Files">Data Lake Files</option>
+                        <option value="Development">Development</option>
+                        <option value="Encryption">Encryption</option>
+                        <option value="Graph">Graph</option>
+                        <option value="HDI">HDI</option>
+                        <option value="JSON Document Store">JSON Document Store</option>
+                        <option value="Knowledge Graph">Knowledge Graph</option>
+                        <option value="Multitenancy">Multitenancy</option>
+                        <option value="Other">Other</option>
+                        <option value="Partitioning">Partitioning</option>
+                        <option value="Performance">Performance</option>
+                        <option value="Predictive Analysis Library">Predictive Analysis Library</option>
+                        <option value="Procedures and Functions">Procedures and Functions</option>
+                        <option value="Property Graph">Property Graph</option>
+                        <option value="Providers">Providers</option>
+                        <option value="Provisioning">Provisioning</option>
+                        <option value="Remote Servers">Remote Servers</option>
+                        <option value="SAP HANA Analytics Catalog (BIMC Views) Reference">SAP HANA Analytics Catalog (BIMC Views) Reference</option>
+                        <option value="SAP HANA Cloud Central">SAP HANA Cloud Central</option>
+                        <option value="SAP HANA Cockpit">SAP HANA Cockpit</option>
+                        <option value="SAP HANA Database Explorer">SAP HANA Database Explorer</option>
+                        <option value="SAP HANA Development Tooling">SAP HANA Development Tooling</option>
+                        <option value="Search">Search</option>
+                        <option value="Service Key">Service Key</option>
+                        <option value="Smart Data Access">Smart Data Access</option>
+                        <option value="Spatial">Spatial</option>
+                        <option value="SQL">SQL</option>
+                        <option value="SQL on Files">SQL on Files</option>
+                        <option value="User Management">User Management</option>
+                        <option value="other">Other...</option>
+                    </select>
+                    <input type="text" id="entry4Input" placeholder="Enter custom value">
+                </div>
+
+                <div class="title-section">
+                    <div class="entry-container">
+                        <label>Title:</label>
+                        <input type="text" id="entry5Input" placeholder="Enter title" class="show">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Description:</label>
+                    <textarea id="mainParagraph" placeholder="Enter the main paragraph content" required></textarea>
+                    
+                    <div id="listItems" class="list-items">
+                        <label>List Items (optional):</label>
+                        <div id="listItemsContainer"></div>
+                        <button type="button" class="add-btn" onclick="addListItem()">Add List Item</button>
+                    </div>
+
+                    <div id="referenceLinks" class="reference-links">
+                        <label>Reference Links:</label>
+                        <div id="referenceLinksContainer"></div>
+                        <button type="button" class="add-btn" onclick="addReferenceLink()">Add Reference Link</button>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem; align-items: end;">
+                        <div style="flex: 2;">
+                            <label>JIRA IDs (optional):</label>
+                            <input type="text" id="jiraIds" placeholder="e.g., HANATOOLING-166875, HANATOOLING-167164">
+                        </div>
+                        <div style="flex: 1;">
+                            <label>Author's Initials (optional):</label>
+                            <input type="text" id="authorInitials" placeholder="e.g., JD, AB">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Action:</label>
+                <input type="text" id="action" value="Info only" readonly>
+                <label>Type:</label>
+                <select id="typeSelect">
+                    <option value="TYPE_NEW" selected>New</option>
+                    <option value="TYPE_CHANGED">Changed</option>
+                    <option value="TYPE_CHANGED_INCOMPATIBLE">Changed (Incompatible)</option>
+                    <option value="TYPE_DEPRECATED">Deprecated</option>
+                    <option value="TYPE_DELETED">Deleted</option>
+                </select>
+                <div class="environment-section">
+                    <div class="entry-container">
+                        <label>Environment:</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="env-all" value="all" onchange="handleEnvironmentSelect()">
+                                <label for="env-all">Select All</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="env-cf" value="Cloud Foundry" checked onchange="handleEnvironmentSelect()">
+                                <label for="env-cf">Cloud Foundry</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="env-kyma" value="Kyma" onchange="handleEnvironmentSelect()">
+                                <label for="env-kyma">Kyma</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="env-k8s" value="Kubernetes" onchange="handleEnvironmentSelect()">
+                                <label for="env-k8s">Kubernetes</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="env-other" value="Other" checked onchange="handleEnvironmentSelect()">
+                                <label for="env-other">Other</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="entry-container">
+                    <label>Valid as Of:</label>
+                    <select id="rtcDateSelect" onchange="handleRtcDateSelect()">
+                        <option value="RTC_DATE_QRC2_2025">RTC_DATE_QRC2_2025</option>
+                        <option value="RTC_DATE_QRC3_2025">RTC_DATE_QRC3_2025</option>
+                        <option value="RTC_DATE_QRC4_2025" selected>RTC_DATE_QRC4_2025</option>
+                        <option value="other">Other...</option>
+                    </select>
+                    <input type="text" id="rtcDateInput" placeholder="Enter custom RTC date">
+                </div>
+
+                <label>Lifecycle:</label>
+                <input type="text" id="lifecycle" value="" readonly>
+                <label>Line of Business:</label>
+                <input type="text" id="lineOfBusiness" value="Technology" readonly>
+                <label>Modular Business Process:</label>
+                <input type="text" id="subProcess" value="Not applicable" readonly>
+            </div>
+        </form>
+
+        <div class="controls">
+            <div class="controls-group">
+                <button onclick="generateXML()">Generate XML</button>
+                <button onclick="copyToClipboard()">Copy to Clipboard</button>
+            </div>
+            <div class="divider"></div>
+            <a href="https://help.sap.com/docs/hana-cloud/f32bc8f64284414b91626b0166e610f3/9a1bdaac90a04c5ea39519c416a97f30.html?locale=en-US&state=DRAFT&version=dev" 
+               target="_blank" 
+               class="add-to-wnv-btn"
+               onclick="copyToClipboardAndRedirect(event)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 15.01l1.41 1.41L11 14.84V19h2v-4.16l1.59 1.59L16 15.01 12.01 11z"/>
+                </svg>
+                Add to What's New Viewer
+            </a>
+        </div>
+
+        <div class="output-section">
+            <label>Generated XML:</label>
+            <pre><code class="language-xml" id="xmlOutput"></code></pre>
+            <div class="copy-indicator" id="copyIndicator">Copied to clipboard!</div>
+            <div class="copy-indicator" id="generateIndicator">XML Generated!</div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-xml.min.js"></script>
+    <script>
+        function handleComponentSelect() {
+            const component = document.getElementById('component').value;
+            // Update the XML generation to use the selected component
+            generateXML();
+        }
+
+        // Add initial list items
+        addListItem();
+        addListItem();
+
+        // Add initial reference link
+        addReferenceLink();
+
+        function handleFeatureSelect() {
+            const select = document.getElementById('featureSelect');
+            const input = document.getElementById('featureInput');
+            input.classList.toggle('show', select.value === 'other');
+            if (select.value !== 'other') {
+                input.value = '';
+                // Sync Version and Valid-as-Of with selected Feature ID
+                const versionSelect = document.getElementById('versionSelect');
+                const rtcDateSelect = document.getElementById('rtcDateSelect');
+                if (select.value === 'HDB_WNV_QRC2_2025') {
+                    versionSelect.value = 'VERSION_QRC2_2025';
+                    rtcDateSelect.value = 'RTC_DATE_QRC2_2025';
+                } else if (select.value === 'HDB_WNV_QRC3_2025') {
+                    versionSelect.value = 'VERSION_QRC3_2025';
+                    rtcDateSelect.value = 'RTC_DATE_QRC3_2025';
+                } else if (select.value === 'HDB_WNV_QRC4_2025') {
+                    versionSelect.value = 'VERSION_QRC4_2025';
+                    rtcDateSelect.value = 'RTC_DATE_QRC4_2025';
+                }
+            }
+        }
+
+        function handleEntrySelect(entryNum) {
+            const select = document.getElementById(`entry${entryNum}Select`);
+            const input = document.getElementById(`entry${entryNum}Input`);
+            input.classList.toggle('show', select.value === 'other');
+            if (select.value !== 'other') {
+                input.value = '';
+            }
+        }
+
+        function addListItem() {
+            const container = document.getElementById('listItemsContainer');
+            const div = document.createElement('div');
+            div.className = 'list-item';
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'list-item-input';
+            input.placeholder = 'Enter list item text';
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = 'Remove';
+            removeBtn.className = 'remove-btn';
+            removeBtn.onclick = () => div.remove();
+            
+            div.appendChild(input);
+            div.appendChild(removeBtn);
+            container.appendChild(div);
+        }
+
+        function handleRtcDateSelect() {
+            const select = document.getElementById('rtcDateSelect');
+            const input = document.getElementById('rtcDateInput');
+            input.classList.toggle('show', select.value === 'other');
+            if (select.value !== 'other') {
+                input.value = '';
+            }
+        }
+
+        function handleVersionSelect() {
+            const select = document.getElementById('versionSelect');
+            const input = document.getElementById('versionInput');
+            input.classList.toggle('show', select.value === 'other');
+            if (select.value !== 'other') {
+                input.value = '';
+            }
+        }
+
+        function handleEnvironmentSelect() {
+            const allCheckbox = document.getElementById('env-all');
+            const environmentCheckboxes = [
+                document.getElementById('env-cf'),
+                document.getElementById('env-kyma'),
+                document.getElementById('env-k8s'),
+                document.getElementById('env-other')
+            ];
+            
+            if (event.target.id === 'env-all') {
+                // If "Select All" is clicked, toggle all other checkboxes
+                environmentCheckboxes.forEach(checkbox => {
+                    checkbox.checked = allCheckbox.checked;
+                });
+            } else {
+                // If any individual checkbox is clicked, update "Select All" status
+                const allOthersChecked = environmentCheckboxes.every(checkbox => checkbox.checked);
+                allCheckbox.checked = allOthersChecked;
+            }
+        }
+
+        function addReferenceLink() {
+            const container = document.getElementById('referenceLinksContainer');
+            const div = document.createElement('div');
+            div.className = 'reference-link-item';
+            
+            const inputsDiv = document.createElement('div');
+            inputsDiv.className = 'reference-link-inputs';
+            
+            const textInput = document.createElement('input');
+            textInput.type = 'text';
+            textInput.className = 'ref-link-text';
+            textInput.placeholder = 'Topic title (e.g. Creating HDI Containers)';
+            
+            const urlInput = document.createElement('input');
+            urlInput.type = 'text';
+            urlInput.className = 'ref-link-url';
+            urlInput.placeholder = 'Link URL (e.g. https://help.sap.com/docs/...)';
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = 'Remove';
+            removeBtn.className = 'remove-btn';
+            removeBtn.onclick = () => {
+                div.remove();
+                if (container.children.length === 0) {
+                    addReferenceLink(); // Ensure at least one reference link input exists
+                }
+            };
+            
+            inputsDiv.appendChild(textInput);
+            inputsDiv.appendChild(urlInput);
+            div.appendChild(inputsDiv);
+            div.appendChild(removeBtn);
+            container.appendChild(div);
+        }
+
+        function generateXML() {
+            const select = document.getElementById('featureSelect');
+            const input = document.getElementById('featureInput');
+            const feature = select.value === 'other' ? input.value : select.value;
+            
+            function getEntryValue(num) {
+                if (num === 3) {
+                    return document.getElementById('areaSelect').value;
+                }
+                if (num === 5) {
+                    return document.getElementById('entry5Input').value;
+                }
+                const select = document.getElementById(`entry${num}Select`);
+                const input = document.getElementById(`entry${num}Input`);
+                return select.value === 'other' ? input.value : select.value;
+            }
+
+            const mainParagraph = document.getElementById('mainParagraph').value;
+            const jiraIds = document.getElementById('jiraIds').value;
+            const authorInitials = document.getElementById('authorInitials').value;
+            
+            // Get version value
+            const versionSelect = document.getElementById('versionSelect');
+            const versionInput = document.getElementById('versionInput');
+            const versionValue = versionSelect.value === 'other' ? versionInput.value : versionSelect.value;
+
+            // Get RTC date value
+            const rtcDateSelect = document.getElementById('rtcDateSelect');
+            const rtcDateInput = document.getElementById('rtcDateInput');
+            const rtcDateValue = rtcDateSelect.value === 'other' ? rtcDateInput.value : rtcDateSelect.value;
+            
+            let listItems = Array.from(document.getElementsByClassName('list-item-input'))
+                .map(input => input.value)
+                .filter(value => value.trim() !== '');
+
+            let xml = feature.trim() ? `<row feature="${feature}">\n` : `<row>\n`;
+            
+            // Standard entries
+            const component = document.getElementById('component').value;
+            xml += `    <entry>\n        <p conkeyref="loio165caba589c64bc3b6dee5405e819aac/${component}"/>\n    </entry>\n`;
+            xml += `    <entry>\n        <p conkeyref="loio165caba589c64bc3b6dee5405e819aac/${versionValue}"/>\n    </entry>\n`;
+            xml += `    <entry>\n        <p conkeyref="loio165caba589c64bc3b6dee5405e819aac/${getEntryValue(3)}"/>\n    </entry>\n`;
+            xml += `    <entry>${getEntryValue(4)}</entry>\n`;
+            xml += `    <entry>${getEntryValue(5)}</entry>\n\n`;
+
+            // Main content
+            xml += `    <entry>\n`;
+            xml += `        <p>${mainParagraph}</p>\n`;
+            if (listItems.length > 0) {
+                xml += `        <ul>\n`;
+                listItems.forEach(item => {
+                    xml += `            <li>${item}</li>\n`;
+                });
+                xml += `        </ul>\n`;
+            }
+
+            // Handle reference links
+            const refLinks = Array.from(document.getElementsByClassName('reference-link-item')).map(item => {
+                const inputs = item.getElementsByTagName('input');
+                return {
+                    text: inputs[0].value.trim(),
+                    url: inputs[1].value.trim()
+                };
+            }).filter(link => link.text && link.url);
+
+            if (refLinks.length > 0) {
+                xml += `        <p>\n            See`;
+                if (refLinks.length === 1) {
+                    xml += `\n            <xref format="html" href="${refLinks[0].url}" scope="external">${refLinks[0].text}</xref>.\n`;
+                } else {
+                    xml += `:\n        </p>\n`;
+                    xml += `        <ul>\n`;
+                    refLinks.forEach(link => {
+                        xml += `            <li><xref format="html" href="${link.url}" scope="external">${link.text}</xref></li>\n`;
+                    });
+                    xml += `        </ul>\n`;
+                }
+                if (refLinks.length === 1) {
+                    xml += `        </p>\n`;
+                }
+            }
+            
+            if (jiraIds || authorInitials) {
+                if (jiraIds) {
+                    jiraIds.split(',').forEach(id => {
+                        const comment = authorInitials ? `${id.trim()} - ${authorInitials}` : id.trim();
+                        xml += `        <!--${comment}-->\n`;
+                    });
+                } else if (authorInitials) {
+                    xml += `        <!--${authorInitials}-->\n`;
+                }
+            }
+            xml += `    </entry>\n\n`;
+
+            // Additional information
+            xml += `    <entry outputclass="Action">\n        <p>Info only</p>\n    </entry>\n`;
+            xml += `    <entry>\n        <p conkeyref="loio165caba589c64bc3b6dee5405e819aac/${document.getElementById('typeSelect').value}"/>\n    </entry>\n`;
+            xml += `    <entry outputclass="BTP_Environment">\n        <sl>\n`;
+            const environmentCheckboxes = [
+                document.getElementById('env-cf'),
+                document.getElementById('env-kyma'),
+                document.getElementById('env-k8s'),
+                document.getElementById('env-other')
+            ];
+            const selectedEnvironments = environmentCheckboxes
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+            
+            selectedEnvironments.forEach(env => {
+                xml += `            <sli>${env}</sli>\n`;
+            });
+            xml += `        </sl>\n    </entry>\n`;
+            xml += `    <entry>\n        <p conkeyref="loio165caba589c64bc3b6dee5405e819aac/${rtcDateValue}"/>\n    </entry>\n`;
+            xml += `    <entry/>\n`;
+            xml += `    <entry outputclass="Line_of_Business">\n        <p>Technology</p>\n    </entry>\n`;
+            xml += `    <entry outputclass="Sub_Process">\n        <p>Not applicable</p>\n    </entry>\n`;
+            xml += `</row>`;
+
+            const xmlOutput = document.getElementById('xmlOutput');
+            xmlOutput.textContent = xml;
+            Prism.highlightElement(xmlOutput);
+            showGenerateIndicator();
+        }
+
+        function copyToClipboard() {
+            const xmlOutput = document.getElementById('xmlOutput');
+            navigator.clipboard.writeText(xmlOutput.textContent)
+                .then(() => {
+                    const indicator = document.getElementById('copyIndicator');
+                    indicator.classList.add('show');
+                    setTimeout(() => {
+                        indicator.classList.remove('show');
+                    }, 2000);
+                })
+                .catch(err => console.error('Failed to copy: ', err));
+        }
+
+        function showGenerateIndicator() {
+            const indicator = document.getElementById('generateIndicator');
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+
+        function copyToClipboardAndRedirect(event) {
+            // First copy the XML
+            const xmlOutput = document.getElementById('xmlOutput');
+            if (xmlOutput.textContent.trim()) {
+                navigator.clipboard.writeText(xmlOutput.textContent)
+                    .then(() => {
+                        const indicator = document.getElementById('copyIndicator');
+                        indicator.classList.add('show');
+                        setTimeout(() => {
+                            indicator.classList.remove('show');
+                        }, 2000);
+                    })
+                    .catch(err => console.error('Failed to copy: ', err));
+            } else {
+                event.preventDefault();
+                alert('Please generate XML content first before adding to What\'s New Viewer.');
+            }
+        }
+    </script>
+
+    <script data-goatcounter="https://wnv-counter.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+</body>
+</html> 

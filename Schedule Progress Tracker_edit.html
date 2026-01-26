@@ -1,0 +1,3561 @@
+<!DOCTYPE html>
+<!-- saved from url=(0076)https://github.wdf.sap.corp/pages/I033652/WNV/schedule_progress_tracker.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Progress Tracker</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,&lt;svg xmlns=&#39;http://www.w3.org/2000/svg&#39; viewBox=&#39;0 0 100 100&#39;&gt;&lt;defs&gt;&lt;linearGradient id=&#39;grad&#39; x1=&#39;0%25&#39; y1=&#39;0%25&#39; x2=&#39;100%25&#39; y2=&#39;100%25&#39;&gt;&lt;stop offset=&#39;0%25&#39; style=&#39;stop-color:%23667eea;stop-opacity:1&#39; /&gt;&lt;stop offset=&#39;50%25&#39; style=&#39;stop-color:%23764ba2;stop-opacity:1&#39; /&gt;&lt;stop offset=&#39;100%25&#39; style=&#39;stop-color:%23f093fb;stop-opacity:1&#39; /&gt;&lt;/linearGradient&gt;&lt;/defs&gt;&lt;rect x=&#39;15&#39; y=&#39;25&#39; width=&#39;70&#39; height=&#39;55&#39; rx=&#39;8&#39; fill=&#39;url(%23grad)&#39; stroke=&#39;white&#39; stroke-width=&#39;3&#39;/&gt;&lt;rect x=&#39;25&#39; y=&#39;15&#39; width=&#39;6&#39; height=&#39;20&#39; rx=&#39;3&#39; fill=&#39;white&#39;/&gt;&lt;rect x=&#39;45&#39; y=&#39;15&#39; width=&#39;6&#39; height=&#39;20&#39; rx=&#39;3&#39; fill=&#39;white&#39;/&gt;&lt;rect x=&#39;65&#39; y=&#39;15&#39; width=&#39;6&#39; height=&#39;20&#39; rx=&#39;3&#39; fill=&#39;white&#39;/&gt;&lt;line x1=&#39;25&#39; y1=&#39;35&#39; x2=&#39;75&#39; y2=&#39;35&#39; stroke=&#39;white&#39; stroke-width=&#39;2&#39;/&gt;&lt;circle cx=&#39;35&#39; cy=&#39;45&#39; r=&#39;3&#39; fill=&#39;white&#39;/&gt;&lt;circle cx=&#39;50&#39; cy=&#39;45&#39; r=&#39;3&#39; fill=&#39;white&#39;/&gt;&lt;circle cx=&#39;65&#39; cy=&#39;45&#39; r=&#39;3&#39; fill=&#39;white&#39;/&gt;&lt;circle cx=&#39;35&#39; cy=&#39;55&#39; r=&#39;3&#39; fill=&#39;white&#39;/&gt;&lt;circle cx=&#39;50&#39; cy=&#39;55&#39; r=&#39;3&#39; fill=&#39;white&#39;/&gt;&lt;circle cx=&#39;65&#39; cy=&#39;55&#39; r=&#39;3&#39; fill=&#39;white&#39;/&gt;&lt;circle cx=&#39;35&#39; cy=&#39;65&#39; r=&#39;3&#39; fill=&#39;white&#39;/&gt;&lt;circle cx=&#39;50&#39; cy=&#39;65&#39; r=&#39;3&#39; fill=&#39;white&#39;/&gt;&lt;/svg&gt;">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3.5em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            letter-spacing: -2px;
+        }
+
+        .header .subtitle {
+            font-size: 1.3em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .current-status {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .status-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            padding: 25px;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: rotate(0deg); opacity: 0.5; }
+            50% { transform: rotate(180deg); opacity: 0.8; }
+        }
+
+        .status-card.bas {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .status-card.takt {
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+            color: #333;
+        }
+
+        .status-card.sprint {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            color: #333;
+        }
+
+        .status-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .current-item {
+            font-size: 2.2em;
+            font-weight: 700;
+            margin: 10px 0;
+            z-index: 2;
+            position: relative;
+        }
+
+        .progress-info {
+            font-size: 1em;
+            opacity: 0.9;
+            z-index: 2;
+            position: relative;
+        }
+
+        .timeline-section {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .timeline-title {
+            font-size: 2.5em;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .timeline-track {
+            margin-bottom: 50px;
+        }
+
+        .track-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .track-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            margin-right: 20px;
+            font-size: 1.2em;
+        }
+
+        .track-icon.bas { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .track-icon.takt { background: linear-gradient(135deg, #a8edea, #fed6e3); color: #333; }
+        .track-icon.sprint { background: linear-gradient(135deg, #ffecd2, #fcb69f); color: #333; }
+
+        .track-name {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .timeline-container {
+            position: relative;
+            padding: 30px 50px;
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            left: 50px;
+            right: 50px;
+            height: 4px;
+            background: linear-gradient(90deg, #e0e0e0, #f0f0f0);
+            border-radius: 2px;
+            z-index: 1;
+        }
+
+        .timeline-items {
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            gap: 10px;
+            padding: 15px 10px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+
+
+
+
+        .timeline-item {
+            background: white;
+            border-radius: 12px;
+            padding: 15px 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            text-align: center;
+            min-width: 120px;
+            max-width: 150px;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+            overflow: visible;
+        }
+
+        /* Extended hover area for better tooltip stability */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            background: transparent;
+            z-index: -1;
+        }
+
+        .timeline-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+
+
+
+        .timeline-item.completed {
+            background: #e8f5e8;
+            border-color: #4caf50;
+            transform: scale(1);
+        }
+
+        .timeline-item.current {
+            background: #fff3e0 !important;  
+            border-color: #ff9800 !important;
+            animation: pulse-border 2s infinite;
+            transform: scale(1.0) !important;
+            z-index: 10;
+        }
+
+        .timeline-item.developmentstarted {
+            background: #e0f2f1;
+            border-color: #26a69a;
+            animation: dev-started-pulse 3s infinite;
+            transform: scale(1);
+            
+        }
+
+        .timeline-item.future {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            opacity: 0.8;
+            transform: scale(1);
+        }
+
+        @keyframes pulse-border {
+            0% { 
+                box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.4), 0 8px 16px rgba(0,0,0,0.1); 
+            }
+            70% { 
+                box-shadow: 0 0 0 15px rgba(255, 152, 0, 0), 0 12px 24px rgba(255, 152, 0, 0.2); 
+            }
+            100% { 
+                box-shadow: 0 0 0 0 rgba(255, 152, 0, 0), 0 8px 16px rgba(0,0,0,0.1); 
+            }
+        }
+
+        @keyframes dev-started-pulse {
+            0% { 
+                box-shadow: 0 0 0 0 rgba(38, 166, 154, 0.3), 0 8px 16px rgba(0,0,0,0.1); 
+            }
+            70% { 
+                box-shadow: 0 0 0 12px rgba(38, 166, 154, 0), 0 12px 24px rgba(38, 166, 154, 0.2); 
+            }
+            100% { 
+                box-shadow: 0 0 0 0 rgba(38, 166, 154, 0), 0 8px 16px rgba(0,0,0,0.1); 
+            }
+        }
+
+        .item-title {
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .item-date {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .item-status {
+            font-size: 0.75em;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: #f0f0f0;
+            color: #666;
+            display: inline-block;
+        }
+
+        .item-status.released { background: #c8e6c9; color: #2e7d32; }
+        .item-status.progress { background: #fff3e0; color: #ef6c00; }
+        .item-status.planned { background: #e3f2fd; color: #1565c0; }
+        .item-status.developmentstarted { background: #e1f5fe; color: #0277bd; }
+        .item-status.skipped { background: #f3e5f5; color: #7b1fa2; }
+
+        .jira-link {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #0052cc;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 0.7em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            z-index: 15;
+        }
+
+        .jira-link:hover {
+            background: #0065ff;
+            transform: scale(1.2);
+        }
+
+        /* Enhanced Tooltip Styles */
+        .tooltip {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.98));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 16px 20px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.15s ease, visibility 0.15s ease, transform 0.2s ease;
+            z-index: 1050;
+            width: 280px;
+            pointer-events: none;
+            font-size: 0.85em;
+            transform: translateY(10px) scale(0.9);
+        }
+
+        /* Add invisible bridge area to prevent gaps */
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            background: transparent;
+            pointer-events: auto;
+        }
+
+        /* Bridge areas for different tooltip positions */
+        .tooltip.above::after {
+            top: 100%;
+            left: -10px;
+            right: -10px;
+            height: 20px;
+        }
+
+        .tooltip.below::after {
+            bottom: 100%;
+            left: -10px;
+            right: -10px;
+            height: 20px;
+        }
+
+        .tooltip.right::after {
+            right: 100%;
+            top: -10px;
+            bottom: -10px;
+            width: 20px;
+        }
+
+        .tooltip.left::after {
+            left: 100%;
+            top: -10px;
+            bottom: -10px;
+            width: 20px;
+        }
+
+        .tooltip::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+
+        /* Tooltip positioned above */
+        .tooltip.above {
+            bottom: calc(100% + 15px);
+            left: 50%;
+            transform: translateX(-50%) translateY(10px) scale(0.9);
+        }
+
+        .tooltip.above::before {
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 10px 8px 0 8px;
+            border-color: rgba(255, 255, 255, 0.95) transparent transparent transparent;
+            filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.1));
+        }
+
+        /* Tooltip positioned below */
+        .tooltip.below {
+            top: calc(100% + 15px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px) scale(0.9);
+        }
+
+        .tooltip.below::before {
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 8px 10px 8px;
+            border-color: transparent transparent rgba(255, 255, 255, 0.95) transparent;
+            filter: drop-shadow(0 -3px 3px rgba(0, 0, 0, 0.1));
+        }
+
+        /* Tooltip positioned to the right */
+        .tooltip.right {
+            left: calc(100% + 15px);
+            top: 50%;
+            transform: translateY(-50%) translateX(-10px) scale(0.9);
+        }
+
+        .tooltip.right::before {
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 8px 10px 8px 0;
+            border-color: transparent rgba(255, 255, 255, 0.95) transparent transparent;
+            filter: drop-shadow(-3px 0 3px rgba(0, 0, 0, 0.1));
+        }
+
+        /* Tooltip positioned to the left */
+        .tooltip.left {
+            right: calc(100% + 15px);
+            top: 50%;
+            transform: translateY(-50%) translateX(10px) scale(0.9);
+        }
+
+        .tooltip.left::before {
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 8px 0 8px 10px;
+            border-color: transparent transparent transparent rgba(255, 255, 255, 0.95);
+            filter: drop-shadow(3px 0 3px rgba(0, 0, 0, 0.1));
+        }
+
+        .tooltip.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(-50%) scale(1);
+        }
+
+        .tooltip.above.show {
+            transform: translateX(-50%) translateY(0) scale(1);
+        }
+
+        .tooltip.below.show {
+            transform: translateX(-50%) translateY(0) scale(1);
+        }
+
+        .tooltip.right.show {
+            transform: translateY(-50%) translateX(0) scale(1);
+        }
+
+        .tooltip.left.show {
+            transform: translateY(-50%) translateX(0) scale(1);
+        }
+
+
+
+        /* Enhanced hover effects for all timeline items */
+        .timeline-item:hover {
+            z-index: 1040;
+            position: relative;
+        }
+        
+        .timeline-items:hover {
+            z-index: 1030;
+            position: relative;
+        }
+
+        .timeline-item:hover .tooltip,
+        .tooltip:hover {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transition-delay: 0.2s;
+        }
+
+        .timeline-item:hover .tooltip.above,
+        .tooltip.above:hover {
+            transform: translateX(-50%) translateY(0) scale(1);
+        }
+
+        .timeline-item:hover .tooltip.below,
+        .tooltip.below:hover {
+            transform: translateX(-50%) translateY(0) scale(1);
+        }
+
+        .timeline-item:hover .tooltip.right,
+        .tooltip.right:hover {
+            transform: translateY(-50%) translateX(0) scale(1);
+        }
+
+        .timeline-item:hover .tooltip.left,
+        .tooltip.left:hover {
+            transform: translateY(-50%) translateX(0) scale(1);
+        }
+
+        /* Ensure tooltip stays visible when hovering */
+        .tooltip:hover {
+            transition-delay: 0s !important;
+        }
+
+
+
+        /* Tooltip content styling */
+        .tooltip h4 {
+            margin: 0 0 12px 0;
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            border-bottom: 2px solid transparent;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            padding-bottom: 8px;
+            position: relative;
+        }
+
+        .tooltip h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .tooltip-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 8px;
+            border-left: 3px solid;
+            transition: all 0.2s ease;
+        }
+
+        .tooltip-detail:hover {
+            background: rgba(0, 0, 0, 0.05);
+            transform: translateX(2px);
+        }
+
+        .tooltip-detail.release { border-left-color: #4facfe; }
+        .tooltip-detail.phase { border-left-color: #a8edea; }
+        .tooltip-detail.development { border-left-color: #4caf50; }
+        .tooltip-detail.testing { border-left-color: #ff9800; }
+        .tooltip-detail.canary { border-left-color: #2196f3; }
+        .tooltip-detail.production { border-left-color: #9c27b0; }
+
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .detail-value {
+            font-weight: 700;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .tooltip-status {
+            text-align: center;
+            margin-top: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tooltip-status.completed { 
+            background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+            color: #2e7d32; 
+        }
+        .tooltip-status.current { 
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            color: #ff9800; 
+        }
+        .tooltip-status.future { 
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            color: #2196f3; 
+        }
+        .tooltip-status.developmentstarted { 
+            background: linear-gradient(135deg, #e1f5fe, #b3e5fc);
+            color: #0277bd; 
+        }
+        .tooltip-status.released { 
+            background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+            color: #2e7d32; 
+        }
+        .tooltip-status.planned { 
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            color: #2196f3; 
+        }
+        .tooltip-status.skipped { 
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+            color: #7b1fa2; 
+        }
+
+        /* Documentation Schedule Styles */
+        .documentation-section {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .qrc-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%);
+            border-radius: 16px;
+            padding: 25px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .qrc-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 4s ease-in-out infinite;
+        }
+
+        .qrc-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .qrc-card.completed {
+            background: linear-gradient(135deg, #4caf50, #45a049);
+        }
+
+        .qrc-card.current {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            animation: qrc-pulse 3s infinite;
+        }
+
+        .qrc-card.future {
+            background: linear-gradient(135deg, #9e9e9e, #757575);
+            opacity: 0.8;
+        }
+
+        @keyframes qrc-pulse {
+            0% { 
+                box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.4), 0 20px 40px rgba(255, 152, 0, 0.2); 
+            }
+            70% { 
+                box-shadow: 0 0 0 20px rgba(255, 152, 0, 0), 0 25px 50px rgba(255, 152, 0, 0.3); 
+            }
+            100% { 
+                box-shadow: 0 0 0 0 rgba(255, 152, 0, 0), 0 20px 40px rgba(255, 152, 0, 0.2); 
+            }
+        }
+
+        .qrc-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            z-index: 2;
+            position: relative;
+            text-align: center;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            padding-bottom: 15px;
+        }
+
+        .milestone-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .milestone {
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            padding: 12px 15px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.2s ease;
+        }
+
+        .milestone:hover {
+            background: rgba(255,255,255,0.25);
+            transform: scale(1.02);
+        }
+
+        .milestone-label {
+            font-size: 0.8em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .milestone-date {
+            font-size: 0.95em;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .milestone-cw {
+            font-size: 0.75em;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        .doc-status-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            z-index: 3;
+        }
+
+        .doc-status-indicator.completed {
+            background: #4caf50;
+            animation: none;
+        }
+
+        .doc-status-indicator.current {
+            background: #ff9800;
+            animation: blink 2s infinite;
+        }
+
+        .doc-status-indicator.future {
+            background: #9e9e9e;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 768px) {
+            .doc-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .milestone-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 12px;
+            }
+            
+            .qrc-card {
+                padding: 20px;
+            }
+            
+            .qrc-title {
+                font-size: 1.1em;
+                margin-bottom: 15px;
+            }
+            
+            .milestone {
+                padding: 10px 12px;
+            }
+        }
+
+        /* Wiki Source Link Styles */
+        .wiki-source-link {
+            display: inline-block;
+            margin-left: 15px;
+            font-size: 0.5em;
+            text-decoration: none;
+            color: white;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            vertical-align: middle;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 10px;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-weight: 500;
+        }
+
+        .wiki-source-link:hover {
+            opacity: 1;
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .wiki-source-link:active {
+            transform: translateY(0);
+        }
+
+        /* Documentation Title Link Styles */
+        .doc-title-link {
+            text-decoration: none;
+            color: inherit;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .doc-title-link:hover {
+            opacity: 0.8;
+            text-decoration: none;
+        }
+
+        .doc-title-link:visited {
+            color: inherit;
+            text-decoration: none;
+        }
+
+
+
+        .comparison-section {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .progress-ring {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+        }
+
+        .progress-ring svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .progress-ring-background {
+            fill: none;
+            stroke: #e0e0e0;
+            stroke-width: 8;
+        }
+
+        .progress-ring-fill {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.3s ease;
+        }
+
+        .progress-ring-fill.bas { stroke: #4facfe; }
+        .progress-ring-fill.takt { stroke: #a8edea; }
+        .progress-ring-fill.sprint { stroke: #fcb69f; }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .comparison-card {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .comparison-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .comparison-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.5em; }
+            .timeline-container {
+                padding: 25px 30px;
+            }
+            .timeline-line {
+                left: 30px;
+                right: 30px;
+            }
+            .timeline-items { 
+                justify-content: flex-start;
+            }
+            .timeline-item { 
+                min-width: 100px; 
+                max-width: 120px;
+                padding: 12px 15px; 
+                flex-shrink: 0;
+            }
+            .status-grid { grid-template-columns: 1fr; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            
+            /* Mobile tooltip adjustments */
+            .tooltip {
+                width: 260px;
+                font-size: 0.8em;
+                padding: 14px 16px;
+            }
+            
+            .tooltip.above,
+            .tooltip.below {
+                left: 50%;
+                transform: translateX(-50%) translateY(-10px) scale(0.9);
+            }
+            
+            .tooltip.above {
+                bottom: calc(100% + 10px);
+            }
+            
+            .tooltip.below {
+                top: calc(100% + 10px);
+            }
+            
+            .tooltip.right,
+            .tooltip.left {
+                left: 50%;
+                transform: translateX(-50%) translateY(-10px) scale(0.9);
+                top: calc(100% + 10px);
+            }
+            
+            .timeline-item:hover .tooltip.above,
+            .timeline-item:hover .tooltip.below,
+            .timeline-item:hover .tooltip.right,
+            .timeline-item:hover .tooltip.left,
+            .tooltip.above:hover,
+            .tooltip.below:hover,
+            .tooltip.right:hover,
+            .tooltip.left:hover {
+                transform: translateX(-50%) translateY(0) scale(1);
+            }
+            
+            .tooltip h4 {
+                font-size: 1em;
+                margin-bottom: 10px;
+            }
+            
+            .tooltip-detail {
+                padding: 6px 10px;
+                margin: 6px 0;
+            }
+            
+            .detail-label,
+            .detail-value {
+                font-size: 0.85em;
+            }
+
+            .current-date-display {
+                padding: 15px 20px;
+                margin-top: 20px;
+            }
+
+            .current-date {
+                font-size: 1.6em;
+            }
+
+            .date-label {
+                font-size: 0.8em;
+            }
+
+            .date-note {
+                font-size: 0.75em;
+            }
+        }
+
+        .live-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #4caf50;
+            border-radius: 50%;
+            animation: blink 2s infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        .current-date-display {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-top: 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .current-date-display:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .date-label {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .current-date {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            margin: 10px 0;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+        }
+
+        .date-note {
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 300;
+            margin-top: 8px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body data-new-gr-c-s-check-loaded="14.1255.0" data-gr-ext-installed="">
+    <div class="container">
+        <div class="header">
+            <h1>Schedule Progress Tracker</h1>
+            <div class="subtitle">
+                <span class="live-indicator"></span>
+                Real-time view of BAS, Takt &amp; Sprint schedules
+            </div>
+            <div class="current-date-display">
+                <div class="date-label">Current Reference Date</div>
+                <div class="current-date" id="currentDate">Thursday, October 2, 2025</div>
+                <div class="date-note">All schedule statuses are calculated based on this date</div>
+            </div>
+        </div>
+
+        <div class="current-status">
+            <h2 style="text-align: center; margin-bottom: 20px; font-size: 2em; color: #333;">Current Status</h2>
+            <div class="status-grid" id="statusGrid">
+                <div class="status-card bas">
+                    <div class="status-title">BAS Release</div>
+                    <div class="current-item">2509b</div>
+                    <div class="progress-info">
+                        Oct 5<br>
+                        Next Release • 19/28 completed
+                    </div>
+                </div>
+                <div class="status-card takt">
+                    <div class="status-title">Takt Phase</div>
+                    <div class="current-item">Takt 10</div>
+                    <div class="progress-info">
+                        CW 39-42<br>
+                        Active Phase • 9/13 completed
+                    </div>
+                </div>
+                <div class="status-card sprint">
+                    <div class="status-title">HANA Developer Tooling Sprint</div>
+                    <div class="current-item">CW34</div>
+                    <div class="progress-info">
+                        In Progress<br>
+                        5/12 released
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-section">
+            <h2 class="timeline-title">Schedule Timeline</h2>
+            
+            <div class="timeline-track">
+                <div class="track-header">
+                    <div class="track-icon bas">BAS</div>
+                    <div class="track-name">BAS Releases <span style="font-size: 0.8em; color: #666; font-weight: normal;"></span></div>
+                </div>
+                <div class="timeline-container">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-items bas" id="basTimeline">
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2412b</div>
+                        <div class="item-date">Jan 12</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip right">
+                    <h4>BAS Release 2412b</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Jan 12</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2412b</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2413b</div>
+                        <div class="item-date">Jan 26</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip right">
+                    <h4>BAS Release 2413b</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Jan 26</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2413b</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2501a</div>
+                        <div class="item-date">Feb 9</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip above">
+                    <h4>BAS Release 2501a</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Feb 9</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2501a</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2501b</div>
+                        <div class="item-date">Feb 23</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip below">
+                    <h4>BAS Release 2501b</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Feb 23</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2501b</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2502a</div>
+                        <div class="item-date">Mar 9</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip above">
+                    <h4>BAS Release 2502a</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Mar 9</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2502a</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2502b</div>
+                        <div class="item-date">Mar 23</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip below">
+                    <h4>BAS Release 2502b</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Mar 23</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2502b</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2503a</div>
+                        <div class="item-date">Apr 6</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip above">
+                    <h4>BAS Release 2503a</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Apr 6</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2503a</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2503b</div>
+                        <div class="item-date">Apr 20</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip below">
+                    <h4>BAS Release 2503b</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Apr 20</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2503b</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2504a</div>
+                        <div class="item-date">May 4</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip above">
+                    <h4>BAS Release 2504a</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">May 4</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2504a</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2504b</div>
+                        <div class="item-date">May 18</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip below">
+                    <h4>BAS Release 2504b</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">May 18</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2504b</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2505a</div>
+                        <div class="item-date">Jun 3</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip above">
+                    <h4>BAS Release 2505a</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Jun 3</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2505a</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2505b</div>
+                        <div class="item-date">Jun 15</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip below">
+                    <h4>BAS Release 2505b</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Jun 15</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2505b</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2506a</div>
+                        <div class="item-date">Jun 29</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip above">
+                    <h4>BAS Release 2506a</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Jun 29</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2506a</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2506b</div>
+                        <div class="item-date">Jul 13</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip below">
+                    <h4>BAS Release 2506b</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Jul 13</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2506b</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2507a</div>
+                        <div class="item-date">Jul 27</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip above">
+                    <h4>BAS Release 2507a</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Jul 27</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2507a</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2507b</div>
+                        <div class="item-date">Aug 10</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip below">
+                    <h4>BAS Release 2507b</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Aug 10</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2507b</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2508a</div>
+                        <div class="item-date">Aug 24</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip above">
+                    <h4>BAS Release 2508a</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Aug 24</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2508a</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2508b</div>
+                        <div class="item-date">Sep 7</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip below">
+                    <h4>BAS Release 2508b</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Sep 7</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2508b</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">2509a</div>
+                        <div class="item-date">Sep 21</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip above">
+                    <h4>BAS Release 2509a</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Sep 21</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2509a</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Released</span>
+                    </div>
+                    <div class="tooltip-status completed">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item current">
+                        
+                        <div class="item-title">2509b</div>
+                        <div class="item-date">Oct 5</div>
+                        <div class="item-status current">Current</div>
+                        <div class="tooltip below">
+                    <h4>BAS Release 2509b</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Oct 5</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2509b</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Current</span>
+                    </div>
+                    <div class="tooltip-status current">Current Release</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item future">
+                        
+                        <div class="item-title">2510a</div>
+                        <div class="item-date">Oct 19</div>
+                        <div class="item-status upcoming">Upcoming</div>
+                        <div class="tooltip above">
+                    <h4>BAS Release 2510a</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Oct 19</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2510a</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Upcoming</span>
+                    </div>
+                    <div class="tooltip-status future">Upcoming</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item future">
+                        
+                        <div class="item-title">2510b</div>
+                        <div class="item-date">Nov 2</div>
+                        <div class="item-status upcoming">Upcoming</div>
+                        <div class="tooltip below">
+                    <h4>BAS Release 2510b</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Nov 2</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2510b</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Upcoming</span>
+                    </div>
+                    <div class="tooltip-status future">Upcoming</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item future">
+                        
+                        <div class="item-title">2511a</div>
+                        <div class="item-date">Nov 16</div>
+                        <div class="item-status upcoming">Upcoming</div>
+                        <div class="tooltip above">
+                    <h4>BAS Release 2511a</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Nov 16</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2511a</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Upcoming</span>
+                    </div>
+                    <div class="tooltip-status future">Upcoming</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item future">
+                        
+                        <div class="item-title">2511b</div>
+                        <div class="item-date">Nov 30</div>
+                        <div class="item-status upcoming">Upcoming</div>
+                        <div class="tooltip below">
+                    <h4>BAS Release 2511b</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Nov 30</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2511b</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Upcoming</span>
+                    </div>
+                    <div class="tooltip-status future">Upcoming</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item future">
+                        
+                        <div class="item-title">2512a</div>
+                        <div class="item-date">Dec 14</div>
+                        <div class="item-status upcoming">Upcoming</div>
+                        <div class="tooltip above">
+                    <h4>BAS Release 2512a</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Dec 14</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2512a</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Upcoming</span>
+                    </div>
+                    <div class="tooltip-status future">Upcoming</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item future">
+                        
+                        <div class="item-title">2512IL</div>
+                        <div class="item-date">Dec 28</div>
+                        <div class="item-status upcoming">Upcoming</div>
+                        <div class="tooltip below">
+                    <h4>BAS Release 2512IL</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Dec 28</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2512IL</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Upcoming</span>
+                    </div>
+                    <div class="tooltip-status future">Upcoming</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item future">
+                        
+                        <div class="item-title">2512b</div>
+                        <div class="item-date">Jan 11</div>
+                        <div class="item-status upcoming">Upcoming</div>
+                        <div class="tooltip left">
+                    <h4>BAS Release 2512b</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Jan 11</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2512b</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Upcoming</span>
+                    </div>
+                    <div class="tooltip-status future">Upcoming</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item future">
+                        
+                        <div class="item-title">2513b</div>
+                        <div class="item-date">Jan 25</div>
+                        <div class="item-status upcoming">Upcoming</div>
+                        <div class="tooltip left">
+                    <h4>BAS Release 2513b</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">Jan 25</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">2513b</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">Upcoming</span>
+                    </div>
+                    <div class="tooltip-status future">Upcoming</div>
+                </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="timeline-track">
+                <div class="track-header">
+                    <div class="track-icon sprint">HDT</div>
+                    <div class="track-name">HANA Developer Tooling Sprints</div>
+                </div>
+                <div class="timeline-container">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-items sprint" id="sprintTimeline">
+                    <div class="timeline-item completed">
+                        <a href="https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW06%22" class="jira-link" target="_blank">J</a>
+                        <div class="item-title">CW06</div>
+                        <div class="item-date">Mar 7</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip right">
+                    <h4>CW06 Sprint</h4>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Start</span>
+                        <span class="detail-value">Jan 13</span>
+                    </div>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Close</span>
+                        <span class="detail-value">Feb 7</span>
+                    </div>
+                    <div class="tooltip-detail canary">
+                        <span class="detail-label">Deploy to Canary</span>
+                        <span class="detail-value">Feb 14</span>
+                    </div>
+                    
+                    <div class="tooltip-detail production">
+                        <span class="detail-label">Deploy to Production</span>
+                        <span class="detail-value">Mar 7</span>
+                    </div>
+                    
+                        <div class="tooltip-detail testing" style="border-left-color: #673ab7;">
+                            <span class="detail-label">Sprint Review</span>
+                            <span class="detail-value">
+                                <a href="https://sap-my.sharepoint.com/:v:/r/personal/jonathan_bregler_sap_com/Documents/Recordings/HANA%20Developer%20Tooling%20Sprint%20Review-20250213_140129-Meeting%20Recording.mp4?csf=1&amp;web=1&amp;nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&amp;e=bfcTs1" target="_blank" style="color: #673ab7; text-decoration: none; font-weight: 600;">
+                                    📹 View Recording
+                                </a>
+                            </span>
+                        </div>
+                    
+                    <div class="tooltip-status released">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        <a href="https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW10%22" class="jira-link" target="_blank">J</a>
+                        <div class="item-title">CW10</div>
+                        <div class="item-date">Apr 4</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip right">
+                    <h4>CW10 Sprint</h4>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Start</span>
+                        <span class="detail-value">Feb 10</span>
+                    </div>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Close</span>
+                        <span class="detail-value">Mar 7</span>
+                    </div>
+                    <div class="tooltip-detail canary">
+                        <span class="detail-label">Deploy to Canary</span>
+                        <span class="detail-value">Mar 14</span>
+                    </div>
+                    
+                    <div class="tooltip-detail production">
+                        <span class="detail-label">Deploy to Production</span>
+                        <span class="detail-value">Apr 4</span>
+                    </div>
+                    
+                        <div class="tooltip-detail testing" style="border-left-color: #673ab7;">
+                            <span class="detail-label">Sprint Review</span>
+                            <span class="detail-value">
+                                <a href="https://sap-my.sharepoint.com/:v:/r/personal/jonathan_bregler_sap_com/Documents/Recordings/HANA%20Developer%20Tooling%20Sprint%20Review-20250313_140231-Meeting%20Recording.mp4?csf=1&amp;web=1&amp;nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&amp;e=l7bEYD" target="_blank" style="color: #673ab7; text-decoration: none; font-weight: 600;">
+                                    📹 View Recording
+                                </a>
+                            </span>
+                        </div>
+                    
+                    <div class="tooltip-status released">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item future">
+                        <a href="https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW14%22" class="jira-link" target="_blank">J</a>
+                        <div class="item-title">CW14</div>
+                        <div class="item-date">May 2</div>
+                        <div class="item-status skipped">Skipped</div>
+                        <div class="tooltip above">
+                    <h4>CW14 Sprint</h4>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Start</span>
+                        <span class="detail-value">Mar 10</span>
+                    </div>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Close</span>
+                        <span class="detail-value">Apr 4</span>
+                    </div>
+                    <div class="tooltip-detail canary">
+                        <span class="detail-label">Deploy to Canary</span>
+                        <span class="detail-value">Apr 11</span>
+                    </div>
+                    
+                    <div class="tooltip-detail production">
+                        <span class="detail-label">Deploy to Production</span>
+                        <span class="detail-value">May 2</span>
+                    </div>
+                    
+                        <div class="tooltip-detail testing" style="border-left-color: #673ab7;">
+                            <span class="detail-label">Sprint Review</span>
+                            <span class="detail-value">
+                                <a href="https://sap-my.sharepoint.com/:v:/r/personal/jonathan_bregler_sap_com/Documents/Recordings/HANA%20Developer%20Tooling%20Sprint%20Review-20250410_140441-Meeting%20Recording.mp4?csf=1&amp;web=1&amp;nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&amp;e=HJCyTF" target="_blank" style="color: #673ab7; text-decoration: none; font-weight: 600;">
+                                    📹 View Recording
+                                </a>
+                            </span>
+                        </div>
+                    
+                    <div class="tooltip-status skipped">Skipped</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        <a href="https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW18%22" class="jira-link" target="_blank">J</a>
+                        <div class="item-title">CW18</div>
+                        <div class="item-date">May 30</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip below">
+                    <h4>CW18 Sprint</h4>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Start</span>
+                        <span class="detail-value">Apr 7</span>
+                    </div>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Close</span>
+                        <span class="detail-value">May 2</span>
+                    </div>
+                    <div class="tooltip-detail canary">
+                        <span class="detail-label">Deploy to Canary</span>
+                        <span class="detail-value">May 9</span>
+                    </div>
+                    
+                    <div class="tooltip-detail production">
+                        <span class="detail-label">Deploy to Production</span>
+                        <span class="detail-value">May 30</span>
+                    </div>
+                    
+                        <div class="tooltip-detail testing" style="border-left-color: #673ab7;">
+                            <span class="detail-label">Sprint Review</span>
+                            <span class="detail-value">
+                                <a href="https://sap-my.sharepoint.com/:v:/r/personal/jonathan_bregler_sap_com/Documents/Recordings/HANA%20Developer%20Tooling%20Sprint%20Review-20250508_140216-Meeting%20Recording.mp4?csf=1&amp;web=1&amp;nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&amp;e=khkgfs" target="_blank" style="color: #673ab7; text-decoration: none; font-weight: 600;">
+                                    📹 View Recording
+                                </a>
+                            </span>
+                        </div>
+                    
+                    <div class="tooltip-status released">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        <a href="https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW22%22" class="jira-link" target="_blank">J</a>
+                        <div class="item-title">CW22</div>
+                        <div class="item-date">Jun 27</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip above">
+                    <h4>CW22 Sprint</h4>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Start</span>
+                        <span class="detail-value">May 5</span>
+                    </div>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Close</span>
+                        <span class="detail-value">May 30</span>
+                    </div>
+                    <div class="tooltip-detail canary">
+                        <span class="detail-label">Deploy to Canary</span>
+                        <span class="detail-value">Jun 6</span>
+                    </div>
+                    
+                        <div class="tooltip-detail testing">
+                            <span class="detail-label">E2E Testing Start</span>
+                            <span class="detail-value">Jun 10</span>
+                        </div>
+                    
+                    <div class="tooltip-detail production">
+                        <span class="detail-label">Deploy to Production</span>
+                        <span class="detail-value">Jun 27</span>
+                    </div>
+                    
+                        <div class="tooltip-detail testing" style="border-left-color: #673ab7;">
+                            <span class="detail-label">Sprint Review</span>
+                            <span class="detail-value">
+                                <a href="https://sap-my.sharepoint.com/:v:/r/personal/jonathan_bregler_sap_com/Documents/Recordings/HANA%20Developer%20Tooling%20Sprint%20Review-20250605_130154-Meeting%20Recording.mp4?csf=1&amp;web=1&amp;nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&amp;e=MQXhTv" target="_blank" style="color: #673ab7; text-decoration: none; font-weight: 600;">
+                                    📹 View Recording
+                                </a>
+                            </span>
+                        </div>
+                    
+                    <div class="tooltip-status released">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item future">
+                        <a href="https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW26%22" class="jira-link" target="_blank">J</a>
+                        <div class="item-title">CW26</div>
+                        <div class="item-date">Jul 25</div>
+                        <div class="item-status skipped">Skipped</div>
+                        <div class="tooltip below">
+                    <h4>CW26 Sprint</h4>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Start</span>
+                        <span class="detail-value">Jun 2</span>
+                    </div>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Close</span>
+                        <span class="detail-value">Jun 27</span>
+                    </div>
+                    <div class="tooltip-detail canary">
+                        <span class="detail-label">Deploy to Canary</span>
+                        <span class="detail-value">Jul 4</span>
+                    </div>
+                    
+                        <div class="tooltip-detail testing">
+                            <span class="detail-label">E2E Testing Start</span>
+                            <span class="detail-value">Jul 8</span>
+                        </div>
+                    
+                    <div class="tooltip-detail production">
+                        <span class="detail-label">Deploy to Production</span>
+                        <span class="detail-value">Jul 25</span>
+                    </div>
+                    
+                        <div class="tooltip-detail testing" style="border-left-color: #673ab7;">
+                            <span class="detail-label">Sprint Review</span>
+                            <span class="detail-value">
+                                <a href="https://teams.microsoft.com/l/meetingrecap?driveId=b%21QvcKPwTDTker4wuzMu6VNRU6BO4TqTNLgm9oHhsP23C0Z8bFe5nIQpDu3_88L7TW&amp;driveItemId=01EKBBHYLYOOJ5XYCCEVGIXQSQL2O3KHDE&amp;sitePath=https%3A%2F%2Fsap-my.sharepoint.com%2F%3Av%3A%2Fp%2Fjonathan_bregler%2FEXhzk9vgQiVMi8JQXp21HGQBKSnJIqRKfHrYgQMgJ3qC8g&amp;fileUrl=https%3A%2F%2Fsap-my.sharepoint.com%2Fpersonal%2Fjonathan_bregler_sap_com%2FDocuments%2FRecordings%2FHANA%2520Developer%2520Tooling%2520Sprint%2520Review-20250703_140306-Meeting%2520Recording.mp4%3Fweb%3D1&amp;iCalUid=040000008200E00074C5B7101A82E00807E90703408D21C0EE52DB01000000000000000010000000370D05F735B84342940CC6EDE28292A8&amp;masterICalUid=040000008200E00074C5B7101A82E00800000000408D21C0EE52DB01000000000000000010000000370D05F735B84342940CC6EDE28292A8&amp;threadId=19%3Ameeting_NDAzMDM2NDItODM5MC00NGYyLThiNjEtNmM3NzRmMjViMWFi%40thread.v2&amp;organizerId=426a72c5-a26b-4a8f-b73c-df1f3cb85e96&amp;tenantId=42f7676c-f455-423c-82f6-dc2d99791af7&amp;callId=dc248fe4-547d-4462-9e89-38a0e39bd7bb&amp;threadType=meeting&amp;meetingType=Recurring&amp;subType=RecapSharingLink_RecapCore" target="_blank" style="color: #673ab7; text-decoration: none; font-weight: 600;">
+                                    📹 View Recording
+                                </a>
+                            </span>
+                        </div>
+                    
+                    <div class="tooltip-status skipped">Skipped</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        <a href="https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW30%22" class="jira-link" target="_blank">J</a>
+                        <div class="item-title">CW30</div>
+                        <div class="item-date">Aug 22</div>
+                        <div class="item-status released">Released</div>
+                        <div class="tooltip above">
+                    <h4>CW30 Sprint</h4>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Start</span>
+                        <span class="detail-value">Jun 30</span>
+                    </div>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Close</span>
+                        <span class="detail-value">Jul 25</span>
+                    </div>
+                    <div class="tooltip-detail canary">
+                        <span class="detail-label">Deploy to Canary</span>
+                        <span class="detail-value">Aug 1</span>
+                    </div>
+                    
+                        <div class="tooltip-detail testing">
+                            <span class="detail-label">E2E Testing Start</span>
+                            <span class="detail-value">Aug 5</span>
+                        </div>
+                    
+                    <div class="tooltip-detail production">
+                        <span class="detail-label">Deploy to Production</span>
+                        <span class="detail-value">Aug 22</span>
+                    </div>
+                    
+                        <div class="tooltip-detail testing" style="border-left-color: #673ab7;">
+                            <span class="detail-label">Sprint Review</span>
+                            <span class="detail-value">
+                                <a href="https://teams.microsoft.com/l/meetingrecap?driveId=b%21QvcKPwTDTker4wuzMu6VNRU6BO4TqTNLgm9oHhsP23C0Z8bFe5nIQpDu3_88L7TW&amp;driveItemId=01EKBBHYIIPNRMJUBCCNC3EZVYCWVGFEN2&amp;sitePath=https%3A%2F%2Fsap-my.sharepoint.com%2F%3Av%3A%2Fp%2Fjonathan_bregler%2FEQh7YsTQIhNFsma4FapikboBYhew27YGUrfaJc6NSTp4nQ&amp;fileUrl=https%3A%2F%2Fsap-my.sharepoint.com%2Fpersonal%2Fjonathan_bregler_sap_com%2FDocuments%2FRecordings%2FHANA%2520Developer%2520Tooling%2520Sprint%2520Review-20250731_140142-Meeting%2520Recording.mp4%3Fweb%3D1&amp;iCalUid=040000008200E00074C5B7101A82E00807E9071F408D21C0EE52DB01000000000000000010000000370D05F735B84342940CC6EDE28292A8&amp;masterICalUid=040000008200E00074C5B7101A82E00800000000408D21C0EE52DB01000000000000000010000000370D05F735B84342940CC6EDE28292A8&amp;threadId=19%3Ameeting_NDAzMDM2NDItODM5MC00NGYyLThiNjEtNmM3NzRmMjViMWFi%40thread.v2&amp;organizerId=426a72c5-a26b-4a8f-b73c-df1f3cb85e96&amp;tenantId=42f7676c-f455-423c-82f6-dc2d99791af7&amp;callId=fe72702f-5465-476e-8763-fd2a97fabb58&amp;threadType=meeting&amp;meetingType=Recurring&amp;subType=RecapSharingLink_RecapCore" target="_blank" style="color: #673ab7; text-decoration: none; font-weight: 600;">
+                                    📹 View Recording
+                                </a>
+                            </span>
+                        </div>
+                    
+                    <div class="tooltip-status released">Released</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item current">
+                        <a href="https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW34%22" class="jira-link" target="_blank">J</a>
+                        <div class="item-title">CW34</div>
+                        <div class="item-date">Sep 26</div>
+                        <div class="item-status inprogress">In Progress</div>
+                        <div class="tooltip below">
+                    <h4>CW34 Sprint</h4>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Start</span>
+                        <span class="detail-value">Jul 28</span>
+                    </div>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Close</span>
+                        <span class="detail-value">Sep 5</span>
+                    </div>
+                    <div class="tooltip-detail canary">
+                        <span class="detail-label">Deploy to Canary</span>
+                        <span class="detail-value">Sep 15</span>
+                    </div>
+                    
+                        <div class="tooltip-detail testing">
+                            <span class="detail-label">E2E Testing Start</span>
+                            <span class="detail-value">Sep 8</span>
+                        </div>
+                    
+                    <div class="tooltip-detail production">
+                        <span class="detail-label">Deploy to Production</span>
+                        <span class="detail-value">Sep 26</span>
+                    </div>
+                    
+                    <div class="tooltip-status inprogress">In Progress</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item future">
+                        <a href="https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW38%22" class="jira-link" target="_blank">J</a>
+                        <div class="item-title">CW38</div>
+                        <div class="item-date">Oct 17</div>
+                        <div class="item-status skipped">Skipped</div>
+                        <div class="tooltip above">
+                    <h4>CW38 Sprint</h4>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Start</span>
+                        <span class="detail-value">Aug 25</span>
+                    </div>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Close</span>
+                        <span class="detail-value">Sep 19</span>
+                    </div>
+                    <div class="tooltip-detail canary">
+                        <span class="detail-label">Deploy to Canary</span>
+                        <span class="detail-value">Sep 26</span>
+                    </div>
+                    
+                        <div class="tooltip-detail testing">
+                            <span class="detail-label">E2E Testing Start</span>
+                            <span class="detail-value">Sep 30</span>
+                        </div>
+                    
+                    <div class="tooltip-detail production">
+                        <span class="detail-label">Deploy to Production</span>
+                        <span class="detail-value">Oct 17</span>
+                    </div>
+                    
+                    <div class="tooltip-status skipped">Skipped</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item developmentstarted">
+                        <a href="https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW42%22" class="jira-link" target="_blank">J</a>
+                        <div class="item-title">CW42</div>
+                        <div class="item-date">Nov 14</div>
+                        <div class="item-status developmentstarted">Development Started</div>
+                        <div class="tooltip below">
+                    <h4>CW42 Sprint</h4>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Start</span>
+                        <span class="detail-value">Sep 22</span>
+                    </div>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Close</span>
+                        <span class="detail-value">Oct 17</span>
+                    </div>
+                    <div class="tooltip-detail canary">
+                        <span class="detail-label">Deploy to Canary</span>
+                        <span class="detail-value">Oct 24</span>
+                    </div>
+                    
+                        <div class="tooltip-detail testing">
+                            <span class="detail-label">E2E Testing Start</span>
+                            <span class="detail-value">Oct 28</span>
+                        </div>
+                    
+                    <div class="tooltip-detail production">
+                        <span class="detail-label">Deploy to Production</span>
+                        <span class="detail-value">Nov 14</span>
+                    </div>
+                    
+                    <div class="tooltip-status developmentstarted">In Development Started</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item current">
+                        <a href="https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW46%22" class="jira-link" target="_blank">J</a>
+                        <div class="item-title">CW46</div>
+                        <div class="item-date">Dec 12</div>
+                        <div class="item-status developmentstarted">Development Started</div>
+                        <div class="tooltip right">
+                    <h4>CW46 Sprint</h4>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Start</span>
+                        <span class="detail-value">Oct 20</span>
+                    </div>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Close</span>
+                        <span class="detail-value">Nov 14</span>
+                    </div>
+                    <div class="tooltip-detail canary">
+                        <span class="detail-label">Deploy to Canary</span>
+                        <span class="detail-value">Nov 21</span>
+                    </div>
+                    
+                        <div class="tooltip-detail testing">
+                            <span class="detail-label">E2E Testing Start</span>
+                            <span class="detail-value">Nov 25</span>
+                        </div>
+                    
+                    <div class="tooltip-detail production">
+                        <span class="detail-label">Deploy to Production</span>
+                        <span class="detail-value">Dec 12</span>
+                    </div>
+                    
+                    <div class="tooltip-status developmentstarted">Development Started</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item future">
+                        <a href="https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW50%22" class="jira-link" target="_blank">J</a>
+                        <div class="item-title">CW50</div>
+                        <div class="item-date">Jan 9</div>
+                        <div class="item-status planned">Planned</div>
+                        <div class="tooltip left">
+                    <h4>CW50 Sprint</h4>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Start</span>
+                        <span class="detail-value">Nov 17</span>
+                    </div>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Close</span>
+                        <span class="detail-value">Dec 12</span>
+                    </div>
+                    <div class="tooltip-detail canary">
+                        <span class="detail-label">Deploy to Canary</span>
+                        <span class="detail-value">Dec 19</span>
+                    </div>
+                    
+                        <div class="tooltip-detail testing">
+                            <span class="detail-label">E2E Testing Start</span>
+                            <span class="detail-value">Dec 23</span>
+                        </div>
+                    
+                    <div class="tooltip-detail production">
+                        <span class="detail-label">Deploy to Production</span>
+                        <span class="detail-value">Jan 9</span>
+                    </div>
+                    
+                    <div class="tooltip-status planned">Planned</div>
+                </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="timeline-track">
+                <div class="track-header">
+                    <div class="track-icon takt">TAKT</div>
+                    <div class="track-name">SAP HANA Cloud Takt Phases</div>
+                </div>
+                <div class="timeline-container">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-items takt" id="taktTimeline">
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">Takt 1</div>
+                        <div class="item-date">CW 03-06</div>
+                        <div class="item-status done">Done</div>
+                        <div class="tooltip right">
+                    <h4>Takt 1</h4>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Start Date</span>
+                        <span class="detail-value">Jan 13</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">End Date</span>
+                        <span class="detail-value">Feb 7</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">25 days</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Calendar Week</span>
+                        <span class="detail-value">CW 03-06</span>
+                    </div>
+                    <div class="tooltip-status completed">Completed</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">Takt 2</div>
+                        <div class="item-date">CW 07-10</div>
+                        <div class="item-status done">Done</div>
+                        <div class="tooltip right">
+                    <h4>Takt 2</h4>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Start Date</span>
+                        <span class="detail-value">Feb 10</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">End Date</span>
+                        <span class="detail-value">Mar 7</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">25 days</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Calendar Week</span>
+                        <span class="detail-value">CW 07-10</span>
+                    </div>
+                    <div class="tooltip-status completed">Completed</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">Takt 3</div>
+                        <div class="item-date">CW 11-14</div>
+                        <div class="item-status done">Done</div>
+                        <div class="tooltip above">
+                    <h4>Takt 3</h4>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Start Date</span>
+                        <span class="detail-value">Mar 10</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">End Date</span>
+                        <span class="detail-value">Apr 4</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">25 days</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Calendar Week</span>
+                        <span class="detail-value">CW 11-14</span>
+                    </div>
+                    <div class="tooltip-status completed">Completed</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">Takt 4</div>
+                        <div class="item-date">CW 15-18</div>
+                        <div class="item-status done">Done</div>
+                        <div class="tooltip below">
+                    <h4>Takt 4</h4>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Start Date</span>
+                        <span class="detail-value">Apr 7</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">End Date</span>
+                        <span class="detail-value">May 2</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">25 days</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Calendar Week</span>
+                        <span class="detail-value">CW 15-18</span>
+                    </div>
+                    <div class="tooltip-status completed">Completed</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">Takt 5</div>
+                        <div class="item-date">CW 19-22</div>
+                        <div class="item-status done">Done</div>
+                        <div class="tooltip above">
+                    <h4>Takt 5</h4>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Start Date</span>
+                        <span class="detail-value">May 5</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">End Date</span>
+                        <span class="detail-value">May 30</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">25 days</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Calendar Week</span>
+                        <span class="detail-value">CW 19-22</span>
+                    </div>
+                    <div class="tooltip-status completed">Completed</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">Takt 6</div>
+                        <div class="item-date">CW 23-26</div>
+                        <div class="item-status done">Done</div>
+                        <div class="tooltip below">
+                    <h4>Takt 6</h4>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Start Date</span>
+                        <span class="detail-value">Jun 2</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">End Date</span>
+                        <span class="detail-value">Jun 27</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">25 days</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Calendar Week</span>
+                        <span class="detail-value">CW 23-26</span>
+                    </div>
+                    <div class="tooltip-status completed">Completed</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">Takt 7</div>
+                        <div class="item-date">CW 27-30</div>
+                        <div class="item-status done">Done</div>
+                        <div class="tooltip above">
+                    <h4>Takt 7</h4>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Start Date</span>
+                        <span class="detail-value">Jun 30</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">End Date</span>
+                        <span class="detail-value">Jul 25</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">25 days</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Calendar Week</span>
+                        <span class="detail-value">CW 27-30</span>
+                    </div>
+                    <div class="tooltip-status completed">Completed</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">Takt 8</div>
+                        <div class="item-date">CW 31-34</div>
+                        <div class="item-status done">Done</div>
+                        <div class="tooltip below">
+                    <h4>Takt 8</h4>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Start Date</span>
+                        <span class="detail-value">Jul 28</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">End Date</span>
+                        <span class="detail-value">Aug 22</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">25 days</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Calendar Week</span>
+                        <span class="detail-value">CW 31-34</span>
+                    </div>
+                    <div class="tooltip-status completed">Completed</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item completed">
+                        
+                        <div class="item-title">Takt 9</div>
+                        <div class="item-date">CW 35-38</div>
+                        <div class="item-status done">Done</div>
+                        <div class="tooltip above">
+                    <h4>Takt 9</h4>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Start Date</span>
+                        <span class="detail-value">Aug 25</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">End Date</span>
+                        <span class="detail-value">Sep 19</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">25 days</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Calendar Week</span>
+                        <span class="detail-value">CW 35-38</span>
+                    </div>
+                    <div class="tooltip-status completed">Completed</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item current">
+                        
+                        <div class="item-title">Takt 10</div>
+                        <div class="item-date">CW 39-42</div>
+                        <div class="item-status active">Active</div>
+                        <div class="tooltip below">
+                    <h4>Takt 10</h4>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Start Date</span>
+                        <span class="detail-value">Sep 22</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">End Date</span>
+                        <span class="detail-value">Oct 17</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">25 days</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Calendar Week</span>
+                        <span class="detail-value">CW 39-42</span>
+                    </div>
+                    <div class="tooltip-status current">Active Phase</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item future">
+                        
+                        <div class="item-title">Takt 11</div>
+                        <div class="item-date">CW 43-46</div>
+                        <div class="item-status upcoming">Upcoming</div>
+                        <div class="tooltip above">
+                    <h4>Takt 11</h4>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Start Date</span>
+                        <span class="detail-value">Oct 20</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">End Date</span>
+                        <span class="detail-value">Nov 14</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">25 days</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Calendar Week</span>
+                        <span class="detail-value">CW 43-46</span>
+                    </div>
+                    <div class="tooltip-status future">Upcoming</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item future">
+                        
+                        <div class="item-title">Takt 12</div>
+                        <div class="item-date">CW 47-50</div>
+                        <div class="item-status upcoming">Upcoming</div>
+                        <div class="tooltip left">
+                    <h4>Takt 12</h4>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Start Date</span>
+                        <span class="detail-value">Nov 17</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">End Date</span>
+                        <span class="detail-value">Dec 12</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">25 days</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Calendar Week</span>
+                        <span class="detail-value">CW 47-50</span>
+                    </div>
+                    <div class="tooltip-status future">Upcoming</div>
+                </div>
+                    </div>
+                
+                    <div class="timeline-item future">
+                        
+                        <div class="item-title">Takt 13</div>
+                        <div class="item-date">CW 51-02</div>
+                        <div class="item-status upcoming">Upcoming</div>
+                        <div class="tooltip left">
+                    <h4>Takt 13</h4>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Start Date</span>
+                        <span class="detail-value">Dec 15</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">End Date</span>
+                        <span class="detail-value">Jan 9</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">25 days</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Calendar Week</span>
+                        <span class="detail-value">CW 51-02</span>
+                    </div>
+                    <div class="tooltip-status future">Upcoming</div>
+                </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="documentation-section">
+            <h2 class="timeline-title">
+                <a href="https://wiki.one.int.sap/wiki/pages/viewpage.action?pageId=2513867259#SAPHANACloudProduction&amp;Delivery-HANACloud2025.14(QRC2/2025)" target="_blank" class="doc-title-link" title="View source documentation on SAP Wiki">
+                    HANA Cloud Documentation Schedule
+                </a>
+            </h2>
+            <div class="doc-grid" id="docGrid">
+                    <div class="qrc-card completed">
+                        <div class="doc-status-indicator completed"></div>
+                        <div class="qrc-title">HANA Cloud 2025.2 (QRC 1/2025)</div>
+                        <div class="milestone-grid">
+                            <div class="milestone">
+                                <div class="milestone-label">Dev Close</div>
+                                <div class="milestone-date">Jan 7</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">RDM</div>
+                                <div class="milestone-date">Feb 6</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">Doc Close</div>
+                                <div class="milestone-date">Mar 4</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">ECC &amp; WN</div>
+                                <div class="milestone-date">Mar 11</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">Dev Correction</div>
+                                <div class="milestone-date">Feb 6</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">RTCDM</div>
+                                <div class="milestone-date">Mar 18</div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                
+                    <div class="qrc-card completed">
+                        <div class="doc-status-indicator completed"></div>
+                        <div class="qrc-title">HANA Cloud 2025.14 (QRC 2/2025)</div>
+                        <div class="milestone-grid">
+                            <div class="milestone">
+                                <div class="milestone-label">Dev Close</div>
+                                <div class="milestone-date">Apr 1</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">RDM</div>
+                                <div class="milestone-date">Apr 30</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">Doc Close</div>
+                                <div class="milestone-date">Jun 10</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">ECC &amp; WN</div>
+                                <div class="milestone-date">Jun 17</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">Dev Correction</div>
+                                <div class="milestone-date">Apr 30</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">RTCDM</div>
+                                <div class="milestone-date">Jun 17</div>
+                            </div>
+                            
+                                <div class="milestone">
+                                    <div class="milestone-label">Production</div>
+                                    <div class="milestone-date">Jun 23</div>
+                                </div>
+                            
+                        </div>
+                    </div>
+                
+                    <div class="qrc-card completed">
+                        <div class="doc-status-indicator completed"></div>
+                        <div class="qrc-title">HANA Cloud 2025.28 (QRC 3/2025)</div>
+                        <div class="milestone-grid">
+                            <div class="milestone">
+                                <div class="milestone-label">Dev Close</div>
+                                <div class="milestone-date">Jul 8</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">RDM</div>
+                                <div class="milestone-date">Aug 7</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">Doc Close</div>
+                                <div class="milestone-date">Sep 7</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">ECC &amp; WN</div>
+                                <div class="milestone-date">Sep 16</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">Dev Correction</div>
+                                <div class="milestone-date">Aug 7</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">RTCDM</div>
+                                <div class="milestone-date">Sep 16</div>
+                            </div>
+                            
+                                <div class="milestone">
+                                    <div class="milestone-label">Production</div>
+                                    <div class="milestone-date">Sep 22</div>
+                                </div>
+                            
+                        </div>
+                    </div>
+                
+                    <div class="qrc-card current">
+                        <div class="doc-status-indicator current"></div>
+                        <div class="qrc-title">HANA Cloud 2025.40 (QRC 4/2025)</div>
+                        <div class="milestone-grid">
+                            <div class="milestone">
+                                <div class="milestone-label">Dev Close</div>
+                                <div class="milestone-date">Oct 14</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">RDM</div>
+                                <div class="milestone-date">Nov 13</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">Doc Close</div>
+                                <div class="milestone-date">Dec 7</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">ECC &amp; WN</div>
+                                <div class="milestone-date">Dec 16</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">Dev Correction</div>
+                                <div class="milestone-date">Oct 30</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">RTCDM</div>
+                                <div class="milestone-date">Dec 16</div>
+                            </div>
+                            
+                                <div class="milestone">
+                                    <div class="milestone-label">Production</div>
+                                    <div class="milestone-date">Dec 22</div>
+                                </div>
+                            
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <div class="comparison-section">
+            <h2 class="timeline-title">Progress Comparison</h2>
+            <div class="comparison-grid" id="comparisonGrid">
+                <div class="comparison-card">
+                    <div class="comparison-title">BAS Releases</div>
+                    
+                <div class="progress-ring">
+                    <svg viewBox="0 0 150 150">
+                        <circle cx="75" cy="75" r="65" class="progress-ring-background"></circle>
+                        <circle cx="75" cy="75" r="65" class="progress-ring-fill bas" style="stroke-dasharray: 277.13335194167104 408.4070449666731"></circle>
+                    </svg>
+                    <div class="progress-text">68%</div>
+                </div>
+            
+                    <div class="comparison-stats">
+                        <div class="stat">
+                            <div class="stat-number">19</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">9</div>
+                            <div class="stat-label">Remaining</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="comparison-card">
+                    <div class="comparison-title">Takt Phases</div>
+                    
+                <div class="progress-ring">
+                    <svg viewBox="0 0 150 150">
+                        <circle cx="75" cy="75" r="65" class="progress-ring-background"></circle>
+                        <circle cx="75" cy="75" r="65" class="progress-ring-fill takt" style="stroke-dasharray: 314.1592653589794 408.4070449666731"></circle>
+                    </svg>
+                    <div class="progress-text">77%</div>
+                </div>
+            
+                    <div class="comparison-stats">
+                        <div class="stat">
+                            <div class="stat-number">10</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">3</div>
+                            <div class="stat-label">Remaining</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="comparison-card">
+                    <div class="comparison-title">HANA Developer Tooling Sprints</div>
+                    
+                <div class="progress-ring">
+                    <svg viewBox="0 0 150 150">
+                        <circle cx="75" cy="75" r="65" class="progress-ring-background"></circle>
+                        <circle cx="75" cy="75" r="65" class="progress-ring-fill sprint" style="stroke-dasharray: 170.16960206944714 408.4070449666731"></circle>
+                    </svg>
+                    <div class="progress-text">42%</div>
+                </div>
+            
+                    <div class="comparison-stats">
+                        <div class="stat">
+                            <div class="stat-number">5</div>
+                            <div class="stat-label">Released</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">7</div>
+                            <div class="stat-label">Planned</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="comparison-card">
+                    <div class="comparison-title">Documentation QRCs</div>
+                    
+                <div class="progress-ring">
+                    <svg viewBox="0 0 150 150">
+                        <circle cx="75" cy="75" r="65" class="progress-ring-background"></circle>
+                        <circle cx="75" cy="75" r="65" class="progress-ring-fill sprint" style="stroke-dasharray: 306.3052837250048 408.4070449666731"></circle>
+                    </svg>
+                    <div class="progress-text">75%</div>
+                </div>
+            
+                    <div class="comparison-stats">
+                        <div class="stat">
+                            <div class="stat-number">3</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">1</div>
+                            <div class="stat-label">Remaining</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Current Reference Date - Change this date to see different schedule states
+        const CURRENT_DATE = new Date(); // Use actual current date
+        // For testing different dates, uncomment and modify:
+        // const CURRENT_DATE = new Date('2025-08-01'); // Simulated date for testing
+        
+        // BAS Release Data - Exact dates from user specification - All 28 releases
+        const basReleases = [
+            { version: '2412b', date: '2025-01-12' },    // 12.1.25
+            { version: '2413b', date: '2025-01-26' },    // 26.1.25
+            { version: '2501a', date: '2025-02-09' },    // 9.2.25
+            { version: '2501b', date: '2025-02-23' },    // 23.2.25
+            { version: '2502a', date: '2025-03-09' },    // 9.3.25
+            { version: '2502b', date: '2025-03-23' },    // 23.3.25
+            { version: '2503a', date: '2025-04-06' },    // 6.4.25
+            { version: '2503b', date: '2025-04-20' },    // 20.4.25
+            { version: '2504a', date: '2025-05-04' },    // 4.5.25
+            { version: '2504b', date: '2025-05-18' },    // 18.5.25
+            { version: '2505a', date: '2025-06-03' },    // 3.6.25
+            { version: '2505b', date: '2025-06-15' },    // 15.6.25
+            { version: '2506a', date: '2025-06-29' },    // 29.6.25
+            { version: '2506b', date: '2025-07-13' },    // 13.7.25
+            { version: '2507a', date: '2025-07-27' },    // 27.7.25
+            { version: '2507b', date: '2025-08-10' },    // 10.8.25
+            { version: '2508a', date: '2025-08-24' },    // 24.8.25
+            { version: '2508b', date: '2025-09-07' },    // 7.9.25
+            { version: '2509a', date: '2025-09-21' },    // 21.9.25
+            { version: '2509b', date: '2025-10-05' },    // 5.10.25
+            { version: '2510a', date: '2025-10-19' },    // 19.10.25
+            { version: '2510b', date: '2025-11-02' },    // 2.11.25
+            { version: '2511a', date: '2025-11-16' },    // 16.11.25
+            { version: '2511b', date: '2025-11-30' },    // 30.11.25
+            { version: '2512a', date: '2025-12-14' },    // 14.12.25
+            { version: '2512IL', date: '2025-12-28' },   // 28.12.25
+            { version: '2512b', date: '2026-01-11' },    // 11.1.26
+            { version: '2513b', date: '2026-01-25' }     // 25.1.26
+        ];
+
+        const taktPhases = [
+            { phase: 'Takt 1', startDate: '2025-01-13', endDate: '2025-02-07', cw: 'CW 03-06' },
+            { phase: 'Takt 2', startDate: '2025-02-10', endDate: '2025-03-07', cw: 'CW 07-10' },
+            { phase: 'Takt 3', startDate: '2025-03-10', endDate: '2025-04-04', cw: 'CW 11-14' },
+            { phase: 'Takt 4', startDate: '2025-04-07', endDate: '2025-05-02', cw: 'CW 15-18' },
+            { phase: 'Takt 5', startDate: '2025-05-05', endDate: '2025-05-30', cw: 'CW 19-22' },
+            { phase: 'Takt 6', startDate: '2025-06-02', endDate: '2025-06-27', cw: 'CW 23-26' },
+            { phase: 'Takt 7', startDate: '2025-06-30', endDate: '2025-07-25', cw: 'CW 27-30' },
+            { phase: 'Takt 8', startDate: '2025-07-28', endDate: '2025-08-22', cw: 'CW 31-34' },
+            { phase: 'Takt 9', startDate: '2025-08-25', endDate: '2025-09-19', cw: 'CW 35-38' },
+            { phase: 'Takt 10', startDate: '2025-09-22', endDate: '2025-10-17', cw: 'CW 39-42' },
+            { phase: 'Takt 11', startDate: '2025-10-20', endDate: '2025-11-14', cw: 'CW 43-46' },
+            { phase: 'Takt 12', startDate: '2025-11-17', endDate: '2025-12-12', cw: 'CW 47-50' },
+            { phase: 'Takt 13', startDate: '2025-12-15', endDate: '2026-01-09', cw: 'CW 51-02' }
+        ];
+
+        // HANA Cloud Documentation QRC Schedule
+        const docSchedule = [
+            {
+                qrc: 'HANA Cloud 2025.2 (QRC 1/2025)',
+                devClose: '2025-01-07',
+                rdm: '2025-02-06',
+                docClose: '2025-03-04',
+                eccWnDeadline: '2025-03-11',
+                devCorrectionClose: '2025-02-06',
+                rtcdm: '2025-03-18',
+                productionLive: null, // Not specified for QRC 1
+                cw: 'CW6 (Dev Correction), CW12 (RTCDM)'
+            },
+            {
+                qrc: 'HANA Cloud 2025.14 (QRC 2/2025)',
+                devClose: '2025-04-01',
+                rdm: '2025-04-30',
+                docClose: '2025-06-10',
+                eccWnDeadline: '2025-06-17',
+                devCorrectionClose: '2025-04-30',
+                rtcdm: '2025-06-17',
+                productionLive: '2025-06-23',
+                cw: 'CW18 (Dev Correction), CW25 (RTCDM), CW26 (Production)'
+            },
+            {
+                qrc: 'HANA Cloud 2025.28 (QRC 3/2025)',
+                devClose: '2025-07-08',
+                rdm: '2025-08-07', // Note: original had range 2025-08-07 to 2025-08-14
+                docClose: '2025-09-07',
+                eccWnDeadline: '2025-09-16',
+                devCorrectionClose: '2025-08-07',
+                rtcdm: '2025-09-16',
+                productionLive: '2025-09-22',
+                cw: 'CW32 (Dev Correction), CW38 (RTCDM), CW39 (Production)'
+            },
+            {
+                qrc: 'HANA Cloud 2025.40 (QRC 4/2025)',
+                devClose: '2025-10-14',
+                rdm: '2025-11-13',
+                docClose: '2025-12-07',
+                eccWnDeadline: '2025-12-16',
+                devCorrectionClose: '2025-10-30',
+                rtcdm: '2025-12-16',
+                productionLive: '2025-12-22',
+                cw: 'CW46 (Dev Correction), CW51 (RTCDM), CW52 (Production)'
+            }
+        ];
+
+        const sprints = [
+            { sprint: 'CW06 Sprint', startDate: '2025-01-13', closeDate: '2025-02-07', canaryDate: '2025-02-14', prodDate: '2025-03-07', status: 'Released', cw: 'CW06', jira: 'https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW06%22', reviewMeeting: 'https://sap-my.sharepoint.com/:v:/r/personal/jonathan_bregler_sap_com/Documents/Recordings/HANA%20Developer%20Tooling%20Sprint%20Review-20250213_140129-Meeting%20Recording.mp4?csf=1&web=1&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=bfcTs1' },
+            { sprint: 'CW10 Sprint', startDate: '2025-02-10', closeDate: '2025-03-07', canaryDate: '2025-03-14', prodDate: '2025-04-04', status: 'Released', cw: 'CW10', jira: 'https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW10%22', reviewMeeting: 'https://sap-my.sharepoint.com/:v:/r/personal/jonathan_bregler_sap_com/Documents/Recordings/HANA%20Developer%20Tooling%20Sprint%20Review-20250313_140231-Meeting%20Recording.mp4?csf=1&web=1&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=l7bEYD' },
+            { sprint: 'CW14 Sprint', startDate: '2025-03-10', closeDate: '2025-04-04', canaryDate: '2025-04-11', prodDate: '2025-05-02', status: 'Skipped', cw: 'CW14', jira: 'https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW14%22', reviewMeeting: 'https://sap-my.sharepoint.com/:v:/r/personal/jonathan_bregler_sap_com/Documents/Recordings/HANA%20Developer%20Tooling%20Sprint%20Review-20250410_140441-Meeting%20Recording.mp4?csf=1&web=1&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=HJCyTF' },
+            { sprint: 'CW18 Sprint', startDate: '2025-04-07', closeDate: '2025-05-02', canaryDate: '2025-05-09', prodDate: '2025-05-30', status: 'Released', cw: 'CW18', jira: 'https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW18%22', reviewMeeting: 'https://sap-my.sharepoint.com/:v:/r/personal/jonathan_bregler_sap_com/Documents/Recordings/HANA%20Developer%20Tooling%20Sprint%20Review-20250508_140216-Meeting%20Recording.mp4?csf=1&web=1&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=khkgfs' },
+            { sprint: 'CW22 Sprint', startDate: '2025-05-05', closeDate: '2025-05-30', canaryDate: '2025-06-06', e2eTestingDate: '2025-06-10', prodDate: '2025-06-27', status: 'Released', cw: 'CW22', jira: 'https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW22%22', reviewMeeting: 'https://sap-my.sharepoint.com/:v:/r/personal/jonathan_bregler_sap_com/Documents/Recordings/HANA%20Developer%20Tooling%20Sprint%20Review-20250605_130154-Meeting%20Recording.mp4?csf=1&web=1&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=MQXhTv' },
+            { sprint: 'CW26 Sprint', startDate: '2025-06-02', closeDate: '2025-06-27', canaryDate: '2025-07-04', e2eTestingDate: '2025-07-08', prodDate: '2025-07-25', status: 'Skipped', cw: 'CW26', jira: 'https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW26%22', reviewMeeting: 'https://teams.microsoft.com/l/meetingrecap?driveId=b%21QvcKPwTDTker4wuzMu6VNRU6BO4TqTNLgm9oHhsP23C0Z8bFe5nIQpDu3_88L7TW&driveItemId=01EKBBHYLYOOJ5XYCCEVGIXQSQL2O3KHDE&sitePath=https%3A%2F%2Fsap-my.sharepoint.com%2F%3Av%3A%2Fp%2Fjonathan_bregler%2FEXhzk9vgQiVMi8JQXp21HGQBKSnJIqRKfHrYgQMgJ3qC8g&fileUrl=https%3A%2F%2Fsap-my.sharepoint.com%2Fpersonal%2Fjonathan_bregler_sap_com%2FDocuments%2FRecordings%2FHANA%2520Developer%2520Tooling%2520Sprint%2520Review-20250703_140306-Meeting%2520Recording.mp4%3Fweb%3D1&iCalUid=040000008200E00074C5B7101A82E00807E90703408D21C0EE52DB01000000000000000010000000370D05F735B84342940CC6EDE28292A8&masterICalUid=040000008200E00074C5B7101A82E00800000000408D21C0EE52DB01000000000000000010000000370D05F735B84342940CC6EDE28292A8&threadId=19%3Ameeting_NDAzMDM2NDItODM5MC00NGYyLThiNjEtNmM3NzRmMjViMWFi%40thread.v2&organizerId=426a72c5-a26b-4a8f-b73c-df1f3cb85e96&tenantId=42f7676c-f455-423c-82f6-dc2d99791af7&callId=dc248fe4-547d-4462-9e89-38a0e39bd7bb&threadType=meeting&meetingType=Recurring&subType=RecapSharingLink_RecapCore' },
+            { sprint: 'CW30 Sprint', startDate: '2025-06-30', closeDate: '2025-07-25', canaryDate: '2025-08-01', e2eTestingDate: '2025-08-05', prodDate: '2025-08-22', status: 'Released', cw: 'CW30', jira: 'https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW30%22', reviewMeeting: 'https://teams.microsoft.com/l/meetingrecap?driveId=b%21QvcKPwTDTker4wuzMu6VNRU6BO4TqTNLgm9oHhsP23C0Z8bFe5nIQpDu3_88L7TW&driveItemId=01EKBBHYIIPNRMJUBCCNC3EZVYCWVGFEN2&sitePath=https%3A%2F%2Fsap-my.sharepoint.com%2F%3Av%3A%2Fp%2Fjonathan_bregler%2FEQh7YsTQIhNFsma4FapikboBYhew27YGUrfaJc6NSTp4nQ&fileUrl=https%3A%2F%2Fsap-my.sharepoint.com%2Fpersonal%2Fjonathan_bregler_sap_com%2FDocuments%2FRecordings%2FHANA%2520Developer%2520Tooling%2520Sprint%2520Review-20250731_140142-Meeting%2520Recording.mp4%3Fweb%3D1&iCalUid=040000008200E00074C5B7101A82E00807E9071F408D21C0EE52DB01000000000000000010000000370D05F735B84342940CC6EDE28292A8&masterICalUid=040000008200E00074C5B7101A82E00800000000408D21C0EE52DB01000000000000000010000000370D05F735B84342940CC6EDE28292A8&threadId=19%3Ameeting_NDAzMDM2NDItODM5MC00NGYyLThiNjEtNmM3NzRmMjViMWFi%40thread.v2&organizerId=426a72c5-a26b-4a8f-b73c-df1f3cb85e96&tenantId=42f7676c-f455-423c-82f6-dc2d99791af7&callId=fe72702f-5465-476e-8763-fd2a97fabb58&threadType=meeting&meetingType=Recurring&subType=RecapSharingLink_RecapCore' },
+            { sprint: 'CW34 Sprint', startDate: '2025-07-28', closeDate: '2025-09-05', canaryDate: '2025-09-15', e2eTestingDate: '2025-09-08', prodDate: '2025-09-26', status: 'In Progress', cw: 'CW34', jira: 'https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW34%22' },
+            { sprint: 'CW38 Sprint', startDate: '2025-08-25', closeDate: '2025-09-19', canaryDate: '2025-09-26', e2eTestingDate: '2025-09-30', prodDate: '2025-10-17', status: 'Skipped', cw: 'CW38', jira: 'https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW38%22' },
+            { sprint: 'CW42 Sprint', startDate: '2025-09-22', closeDate: '2025-10-17', canaryDate: '2025-10-24', e2eTestingDate: '2025-10-28', prodDate: '2025-11-14', status: 'Planned', cw: 'CW42', jira: 'https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW42%22' },
+            { sprint: 'CW46 Sprint', startDate: '2025-10-20', closeDate: '2025-11-14', canaryDate: '2025-11-21', e2eTestingDate: '2025-11-25', prodDate: '2025-12-12', status: 'Development Started', cw: 'CW46', jira: 'https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW46%22' },
+            { sprint: 'CW50 Sprint', startDate: '2025-11-17', closeDate: '2025-12-12', canaryDate: '2025-12-19', e2eTestingDate: '2025-12-23', prodDate: '2026-01-09', status: 'Planned', cw: 'CW50', jira: 'https://jira.tools.sap/issues/?jql=project%20%3D%20HANATOOLING%20AND%20issuetype%20%3D%20%22User%20Story%22%20AND%20fixVersion%20%3D%20%22D_HANA%20Dev%20Tooling%202025CW50%22' }
+        ];
+
+        function parseDate(dateStr) {
+            return new Date(dateStr);
+        }
+
+        function formatDate(date) {
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function getDocQrcStatus(qrc) {
+            // Get all important dates for this QRC
+            const dates = [
+                { date: qrc.devClose, type: 'devClose' },
+                { date: qrc.rdm, type: 'rdm' },
+                { date: qrc.docClose, type: 'docClose' },
+                { date: qrc.eccWnDeadline, type: 'eccWnDeadline' },
+                { date: qrc.devCorrectionClose, type: 'devCorrectionClose' },
+                { date: qrc.rtcdm, type: 'rtcdm' }
+            ];
+            
+            if (qrc.productionLive) {
+                dates.push({ date: qrc.productionLive, type: 'productionLive' });
+            }
+            
+            // Sort dates chronologically
+            dates.sort((a, b) => parseDate(a.date) - parseDate(b.date));
+            
+            // Check if all milestones are complete (based on production live or RTCDM if no production date)
+            const finalDate = qrc.productionLive ? parseDate(qrc.productionLive) : parseDate(qrc.rtcdm);
+            if (CURRENT_DATE > finalDate) {
+                return 'completed';
+            }
+            
+            // Check if any milestone is currently active (within 7 days before or after)
+            const currentMilestone = dates.find(item => {
+                const milestoneDate = parseDate(item.date);
+                const daysDiff = Math.floor((milestoneDate - CURRENT_DATE) / (24 * 60 * 60 * 1000));
+                return daysDiff >= -7 && daysDiff <= 14; // Active if within 7 days past or 14 days future
+            });
+            
+            if (currentMilestone) {
+                return 'current';
+            }
+            
+            return 'future';
+        }
+
+        function getItemStatus(date, itemData = null) {
+            const itemDate = parseDate(date);
+            
+            // For sprints, use their status field with development started logic
+            if (itemData && itemData.status) {
+                if (itemData.status === 'Released') return 'completed';
+                if (itemData.status === 'In Progress') return 'current';
+                if (itemData.status === 'Skipped') return 'future';
+                
+                // Check if development has started for planned sprints
+                if (itemData.status === 'Planned' && itemData.startDate) {
+                    const devStartDate = parseDate(itemData.startDate);
+                    
+                    if (CURRENT_DATE >= devStartDate) {
+                        return 'developmentstarted';
+                    }
+                }
+                
+                return 'future';
+            }
+            
+            // Special logic for Takt phases (have both start and end dates)
+            if (itemData && itemData.endDate) {
+                const startDate = parseDate(itemData.startDate);
+                const endDate = parseDate(itemData.endDate);
+                
+                // Check if current date is within the phase duration
+                if (CURRENT_DATE >= startDate && CURRENT_DATE <= endDate) {
+                    return 'current'; // Currently active phase
+                }
+                
+                // Phase has ended
+                if (CURRENT_DATE > endDate) {
+                    return 'completed'; // Completed phase
+                }
+                
+                // Phase hasn't started yet - only mark as current if it's the immediate next phase
+                // and no other phase is currently active
+                const daysToStart = Math.floor((startDate - CURRENT_DATE) / (24 * 60 * 60 * 1000));
+                if (daysToStart <= 7) { // Reduced from 14 to 7 days to minimize overlap
+                    // Check if any Takt phase is currently active before marking this as current
+                    const activePhase = taktPhases.find(phase => {
+                        const phaseStart = parseDate(phase.startDate);
+                        const phaseEnd = parseDate(phase.endDate);
+                        return CURRENT_DATE >= phaseStart && CURRENT_DATE <= phaseEnd;
+                    });
+                    
+                    // Only mark as current if no phase is currently active
+                    if (!activePhase) {
+                        return 'current'; // Next phase within 1 week and no active phase
+                    }
+                }
+                
+                return 'future'; // Future phase
+            }
+            
+            // For BAS releases: single-day events
+            const daysDiff = Math.floor((itemDate - CURRENT_DATE) / (24 * 60 * 60 * 1000));
+            
+            // For BAS releases: past releases are completed, next release within 2 weeks is current
+            if (daysDiff < 0) return 'completed'; // Past releases = Released
+            if (daysDiff >= 0 && daysDiff <= 14) return 'current'; // Next release within 2 weeks = Current
+            return 'future'; // More than 2 weeks in the future = Upcoming
+        }
+
+        function getCurrentItem(items, dateField = 'date') {
+            let current = null;
+            let minDistance = Infinity;
+
+            items.forEach(item => {
+                const itemDate = parseDate(item[dateField]);
+                const distance = Math.abs(itemDate - CURRENT_DATE);
+                
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    current = item;
+                }
+            });
+
+            return current;
+        }
+
+        function getCurrentSprint() {
+            return sprints.find(s => s.status === 'In Progress') || 
+                   sprints.find(s => s.status === 'Planned') ||
+                   sprints[sprints.length - 1];
+        }
+
+        function generateStatusCards() {
+            const statusGrid = document.getElementById('statusGrid');
+            
+            // Find current items using the same logic as timeline
+            const currentBas = basReleases.find(r => getItemStatus(r.date, r) === 'current') || 
+                              basReleases.find(r => getItemStatus(r.date, r) === 'completed') || 
+                              basReleases[0];
+            
+            const currentTakt = taktPhases.find(t => getItemStatus(t.startDate, t) === 'current') || 
+                               taktPhases.find(t => getItemStatus(t.startDate, t) === 'completed') || 
+                               taktPhases[0];
+            
+            const currentSprint = sprints.find(s => getItemStatus(s.startDate, s) === 'current') || 
+                                 sprints.find(s => getItemStatus(s.startDate, s) === 'developmentstarted') || 
+                                 sprints.find(s => s.status === 'In Progress') || 
+                                 sprints[0];
+            
+            // Count completed items using same logic
+            const basCompleted = basReleases.filter(r => getItemStatus(r.date, r) === 'completed').length;
+            const taktCompleted = taktPhases.filter(t => getItemStatus(t.startDate, t) === 'completed').length;
+            const sprintsCompleted = sprints.filter(s => s.status === 'Released').length;
+            
+            // Get status text for each current item
+            const basStatus = getItemStatus(currentBas.date, currentBas);
+            const taktStatus = getItemStatus(currentTakt.startDate, currentTakt);
+            const sprintStatus = getItemStatus(currentSprint.startDate, currentSprint);
+
+            statusGrid.innerHTML = `
+                <div class="status-card bas">
+                    <div class="status-title">BAS Release</div>
+                    <div class="current-item">${currentBas.version}</div>
+                    <div class="progress-info">
+                        ${formatDate(parseDate(currentBas.date))}<br>
+                        ${basStatus === 'current' ? 'Next Release' : basStatus === 'completed' ? 'Latest Released' : 'Upcoming'} • ${basCompleted}/${basReleases.length} completed
+                    </div>
+                </div>
+                <div class="status-card takt">
+                    <div class="status-title">Takt Phase</div>
+                    <div class="current-item">${currentTakt.phase}</div>
+                    <div class="progress-info">
+                        ${currentTakt.cw}<br>
+                        ${taktStatus === 'current' ? 'Active Phase' : taktStatus === 'completed' ? 'Latest Completed' : 'Upcoming'} • ${taktCompleted}/${taktPhases.length} completed
+                    </div>
+                </div>
+                <div class="status-card sprint">
+                    <div class="status-title">HANA Developer Tooling Sprint</div>
+                    <div class="current-item">${currentSprint.cw}</div>
+                    <div class="progress-info">
+                        ${sprintStatus === 'current' ? 'In Progress' : 
+                          sprintStatus === 'developmentstarted' ? 'Development Started' : 
+                          currentSprint.status}<br>
+                        ${sprintsCompleted}/${sprints.length} released
+                    </div>
+                </div>
+            `;
+        }
+
+        function getTooltipPosition(index, totalItems, viewportWidth = window.innerWidth) {
+            const isNearStart = index < 2;
+            const isNearEnd = index >= totalItems - 2;
+            const isNarrowScreen = viewportWidth < 1200;
+            
+            // On narrow screens, prefer above/below positioning
+            if (isNarrowScreen) {
+                return index < totalItems / 2 ? 'below' : 'above';
+            }
+            
+            // On wider screens, use left/right with fallback to above/below
+            if (isNearStart) return 'right';
+            if (isNearEnd) return 'left';
+            return index % 2 === 0 ? 'above' : 'below';
+        }
+
+        function generateTooltip(item, type, status, index, totalItems) {
+            const position = getTooltipPosition(index, totalItems);
+            let tooltipContent = '';
+            
+            if (type === 'bas') {
+                tooltipContent = `
+                    <h4>BAS Release ${item.version}</h4>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Release Date</span>
+                        <span class="detail-value">${formatDate(parseDate(item.date))}</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Version</span>
+                        <span class="detail-value">${item.version}</span>
+                    </div>
+                    <div class="tooltip-detail release">
+                        <span class="detail-label">Timeline</span>
+                        <span class="detail-value">${getItemStatus(item.date) === 'completed' ? 'Released' : 
+                            getItemStatus(item.date) === 'current' ? 'Current' : 'Upcoming'}</span>
+                    </div>
+                    <div class="tooltip-status ${status}">${status === 'completed' ? 'Released' : 
+                        status === 'current' ? 'Current Release' : 'Upcoming'}</div>
+                `;
+            } else if (type === 'takt') {
+                const startDate = parseDate(item.startDate);
+                const endDate = parseDate(item.endDate);
+                const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+                
+                tooltipContent = `
+                    <h4>${item.phase}</h4>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Start Date</span>
+                        <span class="detail-value">${formatDate(startDate)}</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">End Date</span>
+                        <span class="detail-value">${formatDate(endDate)}</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">${duration} days</span>
+                    </div>
+                    <div class="tooltip-detail phase">
+                        <span class="detail-label">Calendar Week</span>
+                        <span class="detail-value">${item.cw}</span>
+                    </div>
+                    <div class="tooltip-status ${status}">${status === 'completed' ? 'Completed' : 
+                        status === 'current' ? 'Active Phase' : 'Upcoming'}</div>
+                `;
+            } else { // sprint
+                let e2eTestingSection = '';
+                if (item.e2eTestingDate) {
+                    e2eTestingSection = `
+                        <div class="tooltip-detail testing">
+                            <span class="detail-label">E2E Testing Start</span>
+                            <span class="detail-value">${formatDate(parseDate(item.e2eTestingDate))}</span>
+                        </div>
+                    `;
+                }
+                
+                tooltipContent = `
+                    <h4>${item.sprint}</h4>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Start</span>
+                        <span class="detail-value">${formatDate(parseDate(item.startDate))}</span>
+                    </div>
+                    <div class="tooltip-detail development">
+                        <span class="detail-label">Development Close</span>
+                        <span class="detail-value">${formatDate(parseDate(item.closeDate))}</span>
+                    </div>
+                    <div class="tooltip-detail canary">
+                        <span class="detail-label">Deploy to Canary</span>
+                        <span class="detail-value">${formatDate(parseDate(item.canaryDate))}</span>
+                    </div>
+                    ${e2eTestingSection}
+                    <div class="tooltip-detail production">
+                        <span class="detail-label">Deploy to Production</span>
+                        <span class="detail-value">${formatDate(parseDate(item.prodDate))}</span>
+                    </div>
+                    ${item.reviewMeeting ? `
+                        <div class="tooltip-detail testing" style="border-left-color: #673ab7;">
+                            <span class="detail-label">Sprint Review</span>
+                            <span class="detail-value">
+                                <a href="${item.reviewMeeting}" target="_blank" style="color: #673ab7; text-decoration: none; font-weight: 600;">
+                                    📹 View Recording
+                                </a>
+                            </span>
+                        </div>
+                    ` : ''}
+                    <div class="tooltip-status ${status === 'developmentstarted' ? 'developmentstarted' : item.status.toLowerCase().replace(' ', '')}">${status === 'developmentstarted' ? 'In Development Started' : item.status}</div>
+                `;
+            }
+            
+            return `<div class="tooltip ${position}">${tooltipContent}</div>`;
+        }
+
+        function generateTimeline(items, containerId, type, dateField = 'date') {
+            const container = document.getElementById(containerId);
+            container.className = `timeline-items ${type}`;
+            
+            let displayItems;
+            if (type === 'bas') {
+                displayItems = items; // Shows ALL BAS releases
+            } else {
+                const maxItems = Math.min(items.length, 8);
+                const step = Math.max(1, Math.floor(items.length / maxItems));
+                displayItems = items.filter((_, index) => index % step === 0 || index === items.length - 1);
+            }
+            
+            container.innerHTML = displayItems.map((item, index) => {
+                const status = getItemStatus(item[dateField], item);
+                let title, subtitle, statusText;
+                
+                if (type === 'bas') {
+                    title = item.version;
+                    subtitle = formatDate(parseDate(item[dateField]));
+                    statusText = status === 'completed' ? 'Released' : status === 'current' ? 'Current' : 'Upcoming';
+                } else if (type === 'takt') {
+                    title = item.phase;
+                    subtitle = item.cw;
+                    statusText = status === 'completed' ? 'Done' : status === 'current' ? 'Active' : 'Upcoming';
+                } else { // sprint
+                    title = item.cw;
+                    subtitle = formatDate(parseDate(item.prodDate));
+                    if (status === 'developmentstarted') {
+                        statusText = 'Development Started';
+                    } else {
+                    statusText = item.status;
+                    }
+                }
+                
+                let jiraLink = '';
+                let tooltip = generateTooltip(item, type, status, index, displayItems.length);
+                
+                if (item.jira && type === 'sprint') {
+                    jiraLink = `<a href="${item.jira}" class="jira-link" target="_blank">J</a>`;
+                }
+                
+                return `
+                    <div class="timeline-item ${status}">
+                        ${jiraLink}
+                        <div class="item-title">${title}</div>
+                        <div class="item-date">${subtitle}</div>
+                        <div class="item-status ${statusText.toLowerCase().replace(' ', '')}">${statusText}</div>
+                        ${tooltip}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function createProgressRing(percentage, className) {
+            const radius = 65;
+            const circumference = 2 * Math.PI * radius;
+            const strokeDasharray = `${(percentage / 100) * circumference} ${circumference}`;
+            
+            return `
+                <div class="progress-ring">
+                    <svg viewBox="0 0 150 150">
+                        <circle cx="75" cy="75" r="${radius}" class="progress-ring-background"></circle>
+                        <circle cx="75" cy="75" r="${radius}" class="progress-ring-fill ${className}" 
+                                style="stroke-dasharray: ${strokeDasharray}"></circle>
+                    </svg>
+                    <div class="progress-text">${Math.round(percentage)}%</div>
+                </div>
+            `;
+        }
+
+        function generateDocumentationSchedule() {
+            const docGrid = document.getElementById('docGrid');
+            
+            docGrid.innerHTML = docSchedule.map(qrc => {
+                const status = getDocQrcStatus(qrc);
+                
+                return `
+                    <div class="qrc-card ${status}">
+                        <div class="doc-status-indicator ${status}"></div>
+                        <div class="qrc-title">${qrc.qrc}</div>
+                        <div class="milestone-grid">
+                            <div class="milestone">
+                                <div class="milestone-label">Dev Close</div>
+                                <div class="milestone-date">${formatDate(parseDate(qrc.devClose))}</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">RDM</div>
+                                <div class="milestone-date">${formatDate(parseDate(qrc.rdm))}</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">Doc Close</div>
+                                <div class="milestone-date">${formatDate(parseDate(qrc.docClose))}</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">ECC & WN</div>
+                                <div class="milestone-date">${formatDate(parseDate(qrc.eccWnDeadline))}</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">Dev Correction</div>
+                                <div class="milestone-date">${formatDate(parseDate(qrc.devCorrectionClose))}</div>
+                            </div>
+                            <div class="milestone">
+                                <div class="milestone-label">RTCDM</div>
+                                <div class="milestone-date">${formatDate(parseDate(qrc.rtcdm))}</div>
+                            </div>
+                            ${qrc.productionLive ? `
+                                <div class="milestone">
+                                    <div class="milestone-label">Production</div>
+                                    <div class="milestone-date">${formatDate(parseDate(qrc.productionLive))}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function generateComparison() {
+            const comparisonGrid = document.getElementById('comparisonGrid');
+            
+            const basCompleted = basReleases.filter(r => getItemStatus(r.date) === 'completed').length;
+            const basPercentage = (basCompleted / basReleases.length) * 100;
+            
+            const taktCompleted = taktPhases.filter(t => getItemStatus(t.startDate) === 'completed').length;
+            const taktPercentage = (taktCompleted / taktPhases.length) * 100;
+            
+            const sprintsCompleted = sprints.filter(s => s.status === 'Released').length;
+            const sprintPercentage = (sprintsCompleted / sprints.length) * 100;
+
+            const docCompleted = docSchedule.filter(qrc => getDocQrcStatus(qrc) === 'completed').length;
+            const docPercentage = (docCompleted / docSchedule.length) * 100;
+
+            comparisonGrid.innerHTML = `
+                <div class="comparison-card">
+                    <div class="comparison-title">BAS Releases</div>
+                    ${createProgressRing(basPercentage, 'bas')}
+                    <div class="comparison-stats">
+                        <div class="stat">
+                            <div class="stat-number">${basCompleted}</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">${basReleases.length - basCompleted}</div>
+                            <div class="stat-label">Remaining</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="comparison-card">
+                    <div class="comparison-title">Takt Phases</div>
+                    ${createProgressRing(taktPercentage, 'takt')}
+                    <div class="comparison-stats">
+                        <div class="stat">
+                            <div class="stat-number">${taktCompleted}</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">${taktPhases.length - taktCompleted}</div>
+                            <div class="stat-label">Remaining</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="comparison-card">
+                    <div class="comparison-title">HANA Developer Tooling Sprints</div>
+                    ${createProgressRing(sprintPercentage, 'sprint')}
+                    <div class="comparison-stats">
+                        <div class="stat">
+                            <div class="stat-number">${sprintsCompleted}</div>
+                            <div class="stat-label">Released</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">${sprints.length - sprintsCompleted}</div>
+                            <div class="stat-label">Planned</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="comparison-card">
+                    <div class="comparison-title">Documentation QRCs</div>
+                    ${createProgressRing(docPercentage, 'sprint')}
+                    <div class="comparison-stats">
+                        <div class="stat">
+                            <div class="stat-number">${docCompleted}</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">${docSchedule.length - docCompleted}</div>
+                            <div class="stat-label">Remaining</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayCurrentDate() {
+            const currentDateElement = document.getElementById('currentDate');
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                timeZone: 'UTC'
+            };
+            currentDateElement.textContent = CURRENT_DATE.toLocaleDateString('en-US', options);
+        }
+
+        function initializeDashboard() {
+            displayCurrentDate();
+            generateStatusCards();
+            generateTimeline(basReleases, 'basTimeline', 'bas');
+            generateTimeline(taktPhases, 'taktTimeline', 'takt', 'startDate');
+            generateTimeline(sprints, 'sprintTimeline', 'sprint', 'startDate');
+            generateDocumentationSchedule();
+            generateComparison();
+        }
+
+
+
+        // Initialize dashboard on page load
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+        
+        // Auto refresh every 5 minutes
+        setInterval(initializeDashboard, 300000);
+    </script>
+
+    <script data-goatcounter="https://wnv-counter.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

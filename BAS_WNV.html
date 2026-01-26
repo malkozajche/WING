@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAS What's New XML Code Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-solarizedlight.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0070f2;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --border-color: #e9ecef;
+            --text-color: #212529;
+            --text-muted: #6c757d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--card-background);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+
+        h1 {
+            color: #000000;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .form-group {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 112, 242, 0.1);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .controls-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .divider {
+            width: 1px;
+            background: var(--border-color);
+            margin: 0 1rem;
+        }
+
+        .add-btn {
+            background-color: var(--success-color);
+            color: white;
+            min-width: 150px;
+            margin-bottom: 1rem;
+        }
+
+        .add-btn:hover {
+            background-color: #218838;
+        }
+
+        .remove-btn {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            min-width: 120px;
+            white-space: nowrap;
+        }
+
+        .remove-btn:hover {
+            background-color: #c82333;
+        }
+
+        .list-items {
+            margin: 1rem 0;
+        }
+
+        .list-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            align-items: center;
+        }
+
+        .reference-links {
+            margin-top: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .reference-link-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            align-items: center;
+        }
+
+        .reference-link-inputs {
+            flex: 1;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .reference-link-inputs input {
+            flex: 1;
+        }
+
+        .output-section {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            position: relative;
+            background: #ffffff;
+        }
+
+        #xmlOutput {
+            padding: 15px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            background: transparent !important;
+        }
+
+        .output-section label {
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        pre[class*="language-"], 
+        code[class*="language-"] {
+            background: transparent !important;
+            color: #2a2a2a !important;
+        }
+
+        .token.tag {
+            color: #22863a !important;
+        }
+        .token.attr-name {
+            color: #6f42c1 !important;
+        }
+        .token.attr-value {
+            color: #032f62 !important;
+        }
+        .token.string {
+            color: #032f62 !important;
+        }
+
+        .copy-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: var(--success-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .copy-indicator.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .feature-container {
+                flex-direction: column;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .controls button {
+                width: 100%;
+            }
+        }
+
+        #titleInput {
+            display: none;
+            margin-top: 10px;
+        }
+
+        #titleInput.show {
+            display: block;
+        }
+
+        .home-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background-color: #0070f2;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .home-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .home-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .add-to-wnv-btn {
+            background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .add-to-wnv-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .add-to-wnv-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/>
+        </svg>
+        Home
+    </a>
+    <div class="container">
+        <div class="header">
+            <h1>BAS What's New XML Generator</h1>
+        </div>
+        <div class="form-group">
+            <label for="technicalComponent">Technical Component:</label>
+            <input type="text" id="technicalComponent" value="APP_STUDIO">
+        </div>
+        <div class="form-group">
+            <label for="environment">Environment:</label>
+            <input type="text" id="environment" value="Cloud Foundry">
+        </div>
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <select id="titleSelect" onchange="handleTitleSelect()">
+                <option value="SAP HANA Development Tooling">SAP HANA Development Tooling</option>
+                <option value="Calculation Views">Calculation Views</option>
+                <option value="other">Other...</option>
+            </select>
+            <input type="text" id="titleInput" style="display: none;" placeholder="Enter custom title">
+        </div>
+        <div class="form-group">
+            <label>Description:</label>
+            <textarea id="description" rows="4" placeholder="Enter the main description"></textarea>
+            
+            <div id="listItems" class="list-items">
+                <label>List Items:</label>
+                <div id="listItemsContainer"></div>
+                <button type="button" class="add-btn" onclick="addListItem()">Add List Item</button>
+            </div>
+
+            <div id="referenceLinks" class="reference-links">
+                <label>Reference Links:</label>
+                <div id="referenceLinksContainer"></div>
+                <button type="button" class="add-btn" onclick="addReferenceLink()">Add Reference Link</button>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; align-items: end;">
+                <div style="flex: 2;">
+                    <label>JIRA IDs (optional):</label>
+                    <input type="text" id="jiraIds" placeholder="e.g., HANATOOLING-166875, HANATOOLING-167164">
+                </div>
+                <div style="flex: 1;">
+                    <label>Author's Initials (optional):</label>
+                    <input type="text" id="authorInitials" placeholder="e.g., JD, AB">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="action">Action:</label>
+            <select id="action">
+                <option value="Info only">Info only</option>
+                <option value="Required">Required</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="lifecycle">Lifecycle:</label>
+            <select id="lifecycle">
+                <option value="General Availability">General Availability</option>
+                <option value="Beta">Beta</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="type">Type:</label>
+            <select id="type">
+                <option value="Changed">Changed</option>
+                <option value="New">New</option>
+                <option value="Deprecated">Deprecated</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="lineOfBusiness">Line of Business:</label>
+            <input type="text" id="lineOfBusiness" value="Technology">
+        </div>
+        <div class="form-group">
+            <label for="modularBusinessProcess">Modular Business Process:</label>
+            <input type="text" id="modularBusinessProcess" value="Not applicable">
+        </div>
+        <div class="form-group">
+            <label for="product">Product:</label>
+            <input type="text" id="product" value="APP_STUDIO">
+        </div>
+        <div class="form-group">
+            <label for="latestRevision">Latest Revision:</label>
+            <input type="date" id="latestRevision" onchange="syncDates()">
+        </div>
+        <div class="form-group">
+            <label for="availableAsOf">Available as of:</label>
+            <input type="date" id="availableAsOf">
+        </div>
+        <div class="form-group">
+            <label for="version">Version:</label>
+            <select id="versionSelect" onchange="handleVersionSelect()">
+                <option value="T2505a">T2505a (3.06.2025)</option>
+                <option value="T2505b">T2505b (15.06.2025)</option>
+                <option value="T2506a">T2506a (29.06.2025)</option>
+                <option value="T2506b">T2506b (13.07.2025)</option>
+                <option value="T2507a">T2507a (27.07.2025)</option>
+                <option value="T2507b">T2507b (10.08.2025)</option>
+                <option value="T2508a">T2508a (24.08.2025)</option>
+                <option value="T2508b">T2508b (7.09.2025)</option>
+                <option value="T2509a">T2509a (21.09.2025)</option>
+                <option value="T2509b">T2509b (5.10.2025)</option>
+                <option value="T2510a">T2510a (19.10.2025)</option>
+                <option value="T2510b">T2510b (2.11.2025)</option>
+                <option value="T2511a">T2511a (16.11.2025)</option>
+                <option value="T2511b">T2511b (30.11.2025)</option>
+                <option value="T2512a">T2512a (14.12.2025)</option>
+                <option value="T2512IL">T2512IL (28.12.2025)</option>
+                <option value="T2512b">T2512b (11.01.2026)</option>
+                <option value="T2513b">T2513b (25.01.2026)</option>
+                <option value="other">Other...</option>
+            </select>
+            <input type="text" id="versionInput" style="display: none;" placeholder="Enter custom version">
+        </div>
+        <div class="form-group">
+            <label for="scope">Scope:</label>
+            <select id="scopeSelect" onchange="handleScopeSelect()">
+                <option value="Not for sovereign cloud offerings" selected>Not for sovereign cloud offerings</option>
+                <option value="other">Other...</option>
+            </select>
+            <input type="text" id="scopeInput" style="display: none;" placeholder="Enter custom scope">
+        </div>
+
+        <div class="controls">
+            <div class="controls-group">
+                <button onclick="generateXML()">Generate XML</button>
+                <button onclick="copyToClipboard()">Copy to Clipboard</button>
+            </div>
+            <div class="divider"></div>
+            <a href="https://help.sap.com/docs/help/27447f9c897a48c2939a7fd576657cc9/ed631d4ee2214e9f932b03d40b2c7e41.html?state=DRAFT" 
+               target="_blank" 
+               class="add-to-wnv-btn"
+               onclick="copyToClipboardAndRedirect(event)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 15.01l1.41 1.41L11 14.84V19h2v-4.16l1.59 1.59L16 15.01 12.01 11z"/>
+                </svg>
+                Add to What's New Viewer
+            </a>
+        </div>
+
+        <div class="output-section">
+            <label>Generated XML:</label>
+            <pre><code class="language-xml" id="xmlOutput"></code></pre>
+            <div class="copy-indicator" id="copyIndicator">Copied to clipboard!</div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-xml.min.js"></script>
+    <script>
+        // Initialize with default items
+        window.onload = function() {
+            const today = new Date();
+            document.getElementById('latestRevision').valueAsDate = today;
+            syncDates(); // This will set the availableAsOf date
+            
+            // Add initial list items
+            addListItem();
+            addListItem();
+            
+            // Add initial reference link
+            addReferenceLink();
+        };
+
+        function addListItem() {
+            const container = document.getElementById('listItemsContainer');
+            const div = document.createElement('div');
+            div.className = 'list-item';
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'list-item-input';
+            input.placeholder = 'Enter list item text';
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = 'Remove';
+            removeBtn.className = 'remove-btn';
+            removeBtn.onclick = () => div.remove();
+            
+            div.appendChild(input);
+            div.appendChild(removeBtn);
+            container.appendChild(div);
+        }
+
+        function addReferenceLink() {
+            const container = document.getElementById('referenceLinksContainer');
+            const div = document.createElement('div');
+            div.className = 'reference-link-item';
+            
+            const inputsDiv = document.createElement('div');
+            inputsDiv.className = 'reference-link-inputs';
+            
+            const textInput = document.createElement('input');
+            textInput.type = 'text';
+            textInput.className = 'ref-link-text';
+            textInput.placeholder = 'Topic title (e.g. Creating HDI Containers)';
+            
+            const urlInput = document.createElement('input');
+            urlInput.type = 'text';
+            urlInput.className = 'ref-link-url';
+            urlInput.placeholder = 'Link URL (e.g. https://help.sap.com/docs/...)';
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = 'Remove';
+            removeBtn.className = 'remove-btn';
+            removeBtn.onclick = () => {
+                div.remove();
+                if (container.children.length === 0) {
+                    addReferenceLink(); // Ensure at least one reference link input exists
+                }
+            };
+            
+            inputsDiv.appendChild(textInput);
+            inputsDiv.appendChild(urlInput);
+            div.appendChild(inputsDiv);
+            div.appendChild(removeBtn);
+            container.appendChild(div);
+        }
+
+        function formatDate(date) {
+            const [year, month, day] = date.split('-');
+            return `${year}-${month}-${day}`;
+        }
+
+        function handleTitleSelect() {
+            const select = document.getElementById('titleSelect');
+            const input = document.getElementById('titleInput');
+            input.style.display = select.value === 'other' ? 'block' : 'none';
+            if (select.value !== 'other') {
+                input.value = '';
+            }
+        }
+
+        function handleVersionSelect() {
+            const select = document.getElementById('versionSelect');
+            const input = document.getElementById('versionInput');
+            input.style.display = select.value === 'other' ? 'block' : 'none';
+            if (select.value !== 'other') {
+                input.value = '';
+                
+                // Update date fields based on version selection
+                const versionToDateMap = {
+                    'T2505a': '2025-06-03',
+                    'T2505b': '2025-06-15',
+                    'T2506a': '2025-06-29',
+                    'T2506b': '2025-07-13',
+                    'T2507a': '2025-07-27',
+                    'T2507b': '2025-08-10',
+                    'T2508a': '2025-08-24',
+                    'T2508b': '2025-09-07',
+                    'T2509a': '2025-09-21',
+                    'T2509b': '2025-10-05',
+                    'T2510a': '2025-10-19',
+                    'T2510b': '2025-11-02',
+                    'T2511a': '2025-11-16',
+                    'T2511b': '2025-11-30',
+                    'T2512a': '2025-12-14',
+                    'T2512IL': '2025-12-28',
+                    'T2512b': '2026-01-11',
+                    'T2513b': '2026-01-25'
+                };
+                
+                const selectedDate = versionToDateMap[select.value];
+                if (selectedDate) {
+                    document.getElementById('latestRevision').value = selectedDate;
+                    document.getElementById('availableAsOf').value = selectedDate;
+                }
+            }
+        }
+
+        function handleScopeSelect() {
+            const select = document.getElementById('scopeSelect');
+            const input = document.getElementById('scopeInput');
+            input.style.display = select.value === 'other' ? 'block' : 'none';
+            if (select.value !== 'other') {
+                input.value = '';
+            }
+        }
+
+        function copyToClipboard() {
+            const xmlOutput = document.getElementById('xmlOutput');
+            navigator.clipboard.writeText(xmlOutput.textContent)
+                .then(() => {
+                    const indicator = document.getElementById('copyIndicator');
+                    indicator.classList.add('show');
+                    setTimeout(() => {
+                        indicator.classList.remove('show');
+                    }, 2000);
+                })
+                .catch(err => console.error('Failed to copy: ', err));
+        }
+
+        function copyToClipboardAndRedirect(event) {
+            // First copy the XML
+            const xmlOutput = document.getElementById('xmlOutput');
+            if (xmlOutput.textContent.trim()) {
+                navigator.clipboard.writeText(xmlOutput.textContent)
+                    .then(() => {
+                        const indicator = document.getElementById('copyIndicator');
+                        indicator.classList.add('show');
+                        setTimeout(() => {
+                            indicator.classList.remove('show');
+                        }, 2000);
+                    })
+                    .catch(err => console.error('Failed to copy: ', err));
+            } else {
+                event.preventDefault();
+                alert('Please generate XML content first before previewing in documentation.');
+            }
+        }
+
+        function generateXML() {
+            const technicalComponent = document.getElementById('technicalComponent').value;
+            const environment = document.getElementById('environment').value;
+            const titleSelect = document.getElementById('titleSelect');
+            const titleInput = document.getElementById('titleInput');
+            const title = titleSelect.value === 'other' ? titleInput.value : titleSelect.value;
+            const description = document.getElementById('description').value;
+            const action = document.getElementById('action').value;
+            const lifecycle = document.getElementById('lifecycle').value;
+            const type = document.getElementById('type').value;
+            const lob = document.getElementById('lineOfBusiness').value;
+            const modularBusinessProcess = document.getElementById('modularBusinessProcess').value;
+            const product = document.getElementById('product').value;
+            const latestRevision = formatDate(document.getElementById('latestRevision').value);
+            const availableAsOf = formatDate(document.getElementById('availableAsOf').value);
+            const versionSelect = document.getElementById('versionSelect');
+            const versionInput = document.getElementById('versionInput');
+            const version = versionSelect.value === 'other' ? versionInput.value : versionSelect.value;
+            const scopeSelect = document.getElementById('scopeSelect');
+            const scopeInput = document.getElementById('scopeInput');
+            const scope = scopeSelect.value === 'other' ? scopeInput.value : scopeSelect.value;
+            const jiraIds = document.getElementById('jiraIds').value;
+            const authorInitials = document.getElementById('authorInitials').value;
+
+            // Get list items
+            let listItems = Array.from(document.getElementsByClassName('list-item-input'))
+                .map(input => input.value)
+                .filter(value => value.trim() !== '');
+
+            // Get reference links
+            const refLinks = Array.from(document.getElementsByClassName('reference-link-item')).map(item => {
+                const inputs = item.getElementsByTagName('input');
+                return {
+                    text: inputs[0].value.trim(),
+                    url: inputs[1].value.trim()
+                };
+            }).filter(link => link.text && link.url);
+
+            const xml = `<row information_classification="internal" sap_product="future">
+    <entry>
+        <p><pname conkeyref="loioce0163ce7ae248d8b9128fbac31d58c2/${technicalComponent}"/></p>
+    </entry>
+    <entry outputclass="BTP_Environment">
+        <sl>
+            <sli>${environment}</sli>
+        </sl>
+    </entry>
+    <entry>
+        <p>${title}</p>
+    </entry>
+    <entry>
+        <p>${description}</p>
+        ${listItems.length > 0 ? `
+        <ul>
+            ${listItems.map(item => `            <li>${item}</li>`).join('\n')}
+        </ul>` : ''}
+        ${refLinks.length > 0 ? `
+        <p>
+            See${refLinks.length === 1 ? 
+            `\n            <xref format="html" href="${refLinks[0].url}" scope="external">${refLinks[0].text}</xref>.` :
+            `:\n        </p>\n        <ul>\n${refLinks.map(link => 
+            `            <li><xref format="html" href="${link.url}" scope="external">${link.text}</xref></li>`).join('\n')}\n        </ul>`}
+        </p>` : ''}
+        ${jiraIds || authorInitials ? 
+            (jiraIds ? jiraIds.split(',').map(id => {
+                const comment = authorInitials ? `${id.trim()} - ${authorInitials}` : id.trim();
+                return `        <!--${comment}-->`;
+            }).join('\n') + '\n' : (authorInitials ? `        <!--${authorInitials}-->\n` : ''))
+        : ''}
+    </entry>
+    <entry outputclass="Action">
+        <p>${action}</p>
+    </entry>
+    <entry outputclass="Software_Lifecycle">
+        <p>${lifecycle}</p>
+    </entry>
+    <entry outputclass="BTP_Type">
+        <p>${type}</p>
+    </entry>
+    <entry outputclass="Line_of_Business">
+        <p>${lob}</p>
+    </entry>
+    <entry outputclass="Sub_Process">
+        <p>${modularBusinessProcess}</p>
+    </entry>
+    <entry outputclass="Product"><pname conkeyref="loioce0163ce7ae248d8b9128fbac31d58c2/${product}"/></entry>
+    <entry>
+        <p outputclass="Latest_Revision" translate="no">${latestRevision}</p>
+    </entry>
+    <entry>
+        <p outputclass="Valid_as_Of" translate="no">${availableAsOf}</p>
+    </entry>
+    <entry>
+        <p>${version}</p>
+    </entry>
+    <entry>
+        <p>${scope}</p>
+    </entry>
+</row>`;
+
+            const xmlOutput = document.getElementById('xmlOutput');
+            xmlOutput.textContent = xml;
+            Prism.highlightElement(xmlOutput);
+        }
+
+        function syncDates() {
+            const latestRevision = document.getElementById('latestRevision').value;
+            document.getElementById('availableAsOf').value = latestRevision;
+        }
+    </script>
+
+    <script data-goatcounter="https://wnv-counter.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+</body>
+</html> 

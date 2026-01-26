@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What's New Entry Creator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 300px;
+            height: 120px;
+            padding: 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: white;
+            background: #2c3e50;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .button.hana {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        }
+
+        .button.bas {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+
+        .button.tooling {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+        }
+
+        @media (max-width: 768px) {
+            .buttons-container {
+                flex-direction: column;
+            }
+            
+            .button {
+                width: 250px;
+                height: 100px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>What's New Entry Creator</h1>
+        <div class="buttons-container">
+            <a href="HDB_WNV.html" class="button hana">
+                HANA Cloud<br>What's New Entry
+            </a>
+            <a href="BAS_WNV.html" class="button bas">
+                BAS<br>What's New Entry
+            </a>
+            <a href="TOOLING_WNV.html" class="button tooling">
+                SAP HANA Tooling<br>What's New Entry
+            </a>
+            <a href="UNIFIED_WNV.html" class="button unified" style="background: linear-gradient(135deg, #4CAF50 0%, #3498db 50%, #9b59b6 100%);">
+                HANA Cloud & BAS<br>What's New Entry
+            </a>
+        </div>
+    </div>
+
+    <script data-goatcounter="https://wnv-counter.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+</body>
+</html> 

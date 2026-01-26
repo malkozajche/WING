@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified What's New XML Generator</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /><stop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /></linearGradient></defs><circle cx='50' cy='50' r='45' fill='url(%23grad)' /><text x='50' y='65' font-family='Arial,sans-serif' font-size='40' font-weight='bold' text-anchor='middle' fill='white'>W</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-solarizedlight.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0070f2;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --border-color: #e9ecef;
+            --text-color: #212529;
+            --text-muted: #6c757d;
+            --hdb-color: #4CAF50;
+            --bas-color: #3498db;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: var(--card-background);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        h1 {
+            color: #000000;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .home-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background-color: #0070f2;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .home-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .home-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* Schedule Navigation Styles */
+        .schedule-nav {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 10;
+        }
+
+        .schedule-nav-link {
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            opacity: 1;
+            border: none;
+        }
+
+
+        .schedule-nav-link:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .schedule-nav-link svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        @media (max-width: 768px) {
+            .schedule-nav {
+                position: static;
+                justify-content: center;
+                margin: 1rem 0;
+                flex-wrap: wrap;
+            }
+            
+            .schedule-nav-link {
+                flex: 1;
+                min-width: 140px;
+                justify-content: center;
+            }
+        }
+
+        /* Tab Styles */
+        .tab-container {
+            margin-bottom: 2rem;
+        }
+
+        .tab-header {
+            display: flex;
+            border-bottom: 3px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 1rem 2rem;
+            border: none;
+            background: transparent;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            color: var(--text-muted);
+        }
+
+        .tab-button.active {
+            color: var(--text-color);
+        }
+
+        .tab-button.hdb.active {
+            color: var(--hdb-color);
+        }
+
+        .tab-button.bas.active {
+            color: var(--bas-color);
+        }
+
+        .tab-button::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.hdb.active::after {
+            background: var(--hdb-color);
+        }
+
+        .tab-button.bas.active::after {
+            background: var(--bas-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Shared Section */
+        .shared-section {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .shared-section h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .shared-section h2::before {
+            content: "🔗";
+            font-size: 1.2em;
+        }
+
+        /* Form Styles */
+        .form-group {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 112, 242, 0.1);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        .add-btn {
+            background-color: var(--success-color);
+            color: white;
+            min-width: 150px;
+            margin-bottom: 1rem;
+        }
+
+        .add-btn:hover {
+            background-color: #218838;
+        }
+
+        .remove-btn {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            min-width: 120px;
+            white-space: nowrap;
+        }
+
+        .remove-btn:hover {
+            background-color: #c82333;
+        }
+
+        .list-items {
+            margin: 1rem 0;
+        }
+
+        .list-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            align-items: center;
+        }
+
+        .reference-links {
+            margin-top: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .reference-link-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            align-items: center;
+        }
+
+        .reference-link-inputs {
+            flex: 1;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .reference-link-inputs input {
+            flex: 1;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .controls-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .generate-btn.hdb {
+            background: linear-gradient(135deg, var(--hdb-color) 0%, #66bb6a 100%);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .generate-btn.bas {
+            background: linear-gradient(135deg, var(--bas-color) 0%, #5dade2 100%);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .copy-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .copy-btn:hover {
+            background-color: #5a6268;
+        }
+
+        /* Output Section */
+        .output-section {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            position: relative;
+            background: #ffffff;
+        }
+
+        #xmlOutput {
+            padding: 15px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            background: transparent !important;
+        }
+
+        .output-section label {
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        pre[class*="language-"], 
+        code[class*="language-"] {
+            background: transparent !important;
+            color: #2a2a2a !important;
+        }
+
+        .token.tag {
+            color: #22863a !important;
+        }
+        .token.attr-name {
+            color: #6f42c1 !important;
+        }
+        .token.attr-value {
+            color: #032f62 !important;
+        }
+        .token.string {
+            color: #032f62 !important;
+        }
+
+        .copy-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: var(--success-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .copy-indicator.show {
+            opacity: 1;
+        }
+
+        .platform-specific {
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 2px solid;
+        }
+
+        .platform-specific.hdb {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-color: #ff9800;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2);
+        }
+
+        .platform-specific.bas {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 50%, #d1c4e9 100%);
+            border-color: #9c27b0;
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.2);
+        }
+
+        .platform-specific h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+
+        .platform-specific.hdb h3 {
+            color: #e65100;
+        }
+
+        .platform-specific.bas h3 {
+            color: #6a1b9a;
+        }
+
+        .platform-specific.hdb h3::before {
+            content: "🟢";
+        }
+
+        .platform-specific.bas h3::before {
+            content: "🔵";
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .controls button {
+                width: 100%;
+            }
+        }
+
+        #titleInput, #versionInput, #scopeInput, 
+        .entry-input, #featureInput, #rtcDateInput,
+        #hdbVersionInput, #basVersionInput, #hdbFeatureInput, #hdbRtcDateInput {
+            display: none;
+            margin-top: 10px;
+        }
+
+        #titleInput.show, #versionInput.show, #scopeInput.show,
+        .entry-input.show, #featureInput.show, #rtcDateInput.show,
+        #hdbVersionInput.show, #basVersionInput.show, #hdbFeatureInput.show, #hdbRtcDateInput.show {
+            display: block;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .checkbox-item:hover {
+            background-color: rgba(0, 112, 242, 0.05);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            width: 0;
+            height: 0;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            position: relative;
+            user-select: none;
+            padding-left: 2rem;
+            line-height: 1.4;
+        }
+
+        .checkbox-item label:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            background: white;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .checkbox-item label:after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%) rotate(45deg) scale(0);
+            width: 6px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transition: all 0.2s cubic-bezier(0.23, 1, 0.320, 1);
+            opacity: 0;
+        }
+
+        .checkbox-item input[type="checkbox"]:checked + label:before {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .checkbox-item input[type="checkbox"]:checked + label:after {
+            opacity: 1;
+            transform: translateY(-50%) rotate(45deg) scale(1);
+        }
+
+        .checkbox-item:hover input[type="checkbox"]:not(:checked) + label:before {
+            border-color: var(--primary-color);
+            background: rgba(0, 112, 242, 0.05);
+        }
+
+        .checkbox-item input[type="checkbox"]:focus + label:before {
+            box-shadow: 0 0 0 3px rgba(0, 112, 242, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .checkbox-item:first-child {
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 0.25rem;
+            padding-bottom: 0.75rem;
+        }
+
+        .checkbox-item:first-child label {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .checkbox-item:first-child label:before {
+            border-width: 2px;
+        }
+
+        .add-to-wnv-btn {
+            background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .add-to-wnv-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .add-to-wnv-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* JIRA Section Styles */
+        .jira-section {
+            background: linear-gradient(135deg, #fff8dc 0%, #ffeaa7 100%);
+            border: 2px solid #fdcb6e;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(253, 203, 110, 0.2);
+        }
+
+        .jira-section h2 {
+            color: #d63031;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .jira-section h2::before {
+            content: "🎯";
+            font-size: 1.2em;
+        }
+
+        .jira-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .jira-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .jira-btn {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .jira-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .jira-btn.generate-comment {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+        }
+
+        .jira-btn.copy-comment {
+            background: linear-gradient(135deg, #0984e3 0%, #74b9ff 100%);
+        }
+
+        .jira-btn.add-to-jira {
+            background: linear-gradient(135deg, #d63031 0%, #fd79a8 100%);
+        }
+
+        .jira-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .jira-links {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .jira-link-btn {
+            background: linear-gradient(135deg, #e17055 0%, #fd79a8 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+        }
+
+        .jira-link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .jira-link-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .jira-comment-output {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .jira-comment-output label {
+            margin-bottom: 1rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .comment-preview {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 1rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            min-height: 120px;
+            color: #2c3e50;
+            line-height: 1.4;
+        }
+
+        .comment-preview.has-content {
+            background: #ffffff;
+            border-color: #28a745;
+        }
+
+        .comment-editor {
+            width: 100%;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 1rem;
+            font-family: monospace;
+            color: #2c3e50;
+            line-height: 1.4;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.3s ease;
+        }
+
+        .comment-editor:focus {
+            outline: none;
+            border-color: #6c5ce7;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+            background: #ffffff;
+        }
+
+        .comment-editor.has-content {
+            background: #ffffff;
+            border-color: #28a745;
+        }
+
+        .jira-message {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 6px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            animation: slideDown 0.3s ease;
+        }
+
+        .jira-message.error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .message-content {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .message-text {
+            font-weight: 500;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .jira-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .jira-actions {
+                justify-content: center;
+            }
+
+            .jira-links {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="home-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/>
+            </svg>
+            Home
+        </a>
+        
+        <!-- Schedule Navigation -->
+        <nav class="schedule-nav">
+            <a href="schedule_progress_tracker.html" target="_blank" class="schedule-nav-link dev" title="View Development & Documentation Schedules (Opens in new tab)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H20v2h-0.5v16c0 1.1-0.9 2-2 2H6.5c-1.1 0-2-0.9-2-2V4H4V2h0.5C5.6 2 6.5 2.9 6.5 4v0.5h11V4c0-1.1 0.9-2 2-2z"/>
+                </svg>
+                Dev & Doc Schedules
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width: 14px; height: 14px; opacity: 0.8;">
+                    <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+                </svg>
+            </a>
+        </nav>
+        
+        <div class="header">
+            <h1>Unified What's New XML Generator</h1>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Create What's New entries for both HANA Cloud and BAS from shared content</p>
+        </div>
+
+        <!-- Shared Content Section -->
+        <div class="shared-section">
+            <h2>Shared Content</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Fill out this information once and it will be used for both platforms</p>
+            
+            <div class="form-group">
+                <label for="sharedTitle">Title:</label>
+                <select id="sharedTitleSelect" onchange="handleSharedTitleSelect()">
+                    <option value="SAP HANA Native Applications" selected>SAP HANA Native Applications</option>
+                    <option value="Calculation Views">Calculation Views</option>
+                    <option value="other">Other...</option>
+                </select>
+                <input type="text" id="titleInput" placeholder="Enter custom title">
+            </div>
+
+            <div class="form-group">
+                <label>Description:</label>
+                <textarea id="sharedDescription" rows="4" placeholder="Enter the main description"></textarea>
+                
+                <div id="listItems" class="list-items">
+                    <label>List Items:</label>
+                    <div id="listItemsContainer"></div>
+                    <button type="button" class="add-btn" onclick="addListItem()">Add List Item</button>
+                </div>
+
+                <div id="referenceLinks" class="reference-links">
+                    <label>Reference Links:</label>
+                    <div id="referenceLinksContainer"></div>
+                    <button type="button" class="add-btn" onclick="addReferenceLink()">Add Reference Link</button>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; align-items: end;">
+                    <div style="flex: 2;">
+                        <label>JIRA IDs (optional):</label>
+                        <input type="text" id="sharedJiraIds" placeholder="e.g., HANATOOLING-166875, HANATOOLING-167164">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Author's Initials (optional):</label>
+                        <input type="text" id="authorInitials" placeholder="e.g., JD, AB">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Tab Container -->
+        <div class="tab-container">
+            <div class="tab-header">
+                <button class="tab-button hdb active" onclick="switchTab('hdb')">
+                    🟢 HANA Cloud
+                </button>
+                <button class="tab-button bas" onclick="switchTab('bas')">
+                    🔵 Business Application Studio 
+                </button>
+            </div>
+
+            <!-- HDB Tab Content -->
+            <div id="hdb-tab" class="tab-content active">
+                <div class="platform-specific hdb">
+                    <h3>HANA Cloud Specific Settings</h3>
+                    
+                    <div class="form-group">
+                        <label for="hdbFeature">Feature ID:</label>
+                        <select id="hdbFeatureSelect" onchange="handleFeatureSelect('hdb')">
+                            <option value="HDB_WNV_QRC2_2025">HDB_WNV_QRC2_2025</option>
+                            <option value="HDB_WNV_QRC3_2025">HDB_WNV_QRC3_2025</option>
+                            <option value="HDB_WNV_QRC4_2025" selected>HDB_WNV_QRC4_2025</option>
+                            <option value="other">Other...</option>
+                        </select>
+                        <input type="text" id="hdbFeatureInput" placeholder="Enter custom Feature ID">
+                    </div>
+
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label>Component:</label>
+                            <select id="hdbComponent">
+                                <option value="COMP_HANA_DB">SAP HANA Database</option>
+                                <option value="COMP_HANA_CLOUD">SAP HANA Cloud</option>
+                                <option value="COMP_DL">Data Lake</option>                    
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Version:</label>
+                            <select id="hdbVersionSelect" onchange="handleVersionSelect('hdb')">
+                                <option value="VERSION_QRC2_2025">VERSION_QRC2_2025</option>
+                                <option value="VERSION_QRC3_2025">VERSION_QRC3_2025</option>
+                                <option value="VERSION_QRC4_2025" selected>VERSION_QRC4_2025</option>
+                                <option value="VERSION_INDEPENDENT">Version independent</option>
+                                <option value="other">Other...</option>
+                            </select>
+                            <input type="text" id="hdbVersionInput" placeholder="Enter custom version">
+                        </div>
+                    </div>
+
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label>Area:</label>
+                            <select id="hdbArea">
+                                <option value="AREA_MONITORING">Monitoring</option>
+                                <option value="AREA_ADMIN">Administration</option>
+                                <option value="AREA_SECURITY">Security</option>
+                                <option value="AREA_TROUBLE">Troubleshooting</option>
+                                <option value="AREA_DEV" selected>Development</option>
+                                <option value="AREA_REF">Reference</option>
+                                <option value="AREA_MIGRATION">Migration</option>
+                                <option value="AREA_DOC">Documentation</option>
+                                <option value="AREA_PROV">Provisioning</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Category:</label>
+                            <select id="hdbCategorySelect" onchange="handleEntrySelect('hdb', 'category')">
+                                <option value="Administration">Administration</option>
+                                <option value="Alerts and Notifications">Alerts and Notifications</option>
+                                <option value="Auditing">Auditing</option>
+                                <option value="Authentication">Authentication</option>
+                                <option value="Authorization">Authorization</option>
+                                <option value="SAP HANA Development Tooling" selected>SAP HANA Development Tooling</option>
+                                <option value="other">Other...</option>
+                            </select>
+                            <input type="text" id="hdbCategoryInput" class="entry-input" placeholder="Enter custom value">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Type:</label>
+                        <select id="hdbType">
+                            <option value="TYPE_NEW" selected>New</option>
+                            <option value="TYPE_CHANGED">Changed</option>
+                            <option value="TYPE_CHANGED_INCOMPATIBLE">Changed (Incompatible)</option>
+                            <option value="TYPE_DEPRECATED">Deprecated</option>
+                            <option value="TYPE_DELETED">Deleted</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Environment:</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="hdb-env-all" value="all" onchange="handleEnvironmentSelect('hdb')">
+                                <label for="hdb-env-all">Select All</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="hdb-env-cf" value="Cloud Foundry" checked onchange="handleEnvironmentSelect('hdb')">
+                                <label for="hdb-env-cf">Cloud Foundry</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="hdb-env-kyma" value="Kyma" onchange="handleEnvironmentSelect('hdb')">
+                                <label for="hdb-env-kyma">Kyma</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="hdb-env-k8s" value="Kubernetes" onchange="handleEnvironmentSelect('hdb')">
+                                <label for="hdb-env-k8s">Kubernetes</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="hdb-env-other" value="Other" onchange="handleEnvironmentSelect('hdb')">
+                                <label for="hdb-env-other">Other</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Valid as Of:</label>
+                        <select id="hdbRtcDateSelect" onchange="handleRtcDateSelect('hdb')">
+                            <option value="RTC_DATE_QRC2_2025">RTC_DATE_QRC2_2025</option>
+                            <option value="RTC_DATE_QRC3_2025">RTC_DATE_QRC3_2025</option>
+                            <option value="RTC_DATE_QRC4_2025" selected>RTC_DATE_QRC4_2025</option>
+                            <option value="other">Other...</option>
+                        </select>
+                        <input type="text" id="hdbRtcDateInput" placeholder="Enter custom RTC date">
+                    </div>
+
+                    <div class="controls">
+                        <div class="controls-group">
+                            <button class="generate-btn hdb" onclick="generateXML('hdb')">Generate HANA Cloud XML</button>
+                            <button class="copy-btn" onclick="copyToClipboard()">Copy to Clipboard</button>
+                        </div>
+                        <div class="controls-group">
+                            <a href="https://help.sap.com/docs/hana-cloud/f32bc8f64284414b91626b0166e610f3/b2de621c8ed74056add2e0103af66c40.html?state=DRAFT&version=dev" 
+                               target="_blank" 
+                               class="add-to-wnv-btn"
+                               onclick="copyToClipboardAndRedirect(event, 'hdb')">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 15.01l1.41 1.41L11 14.84V19h2v-4.16l1.59 1.59L16 15.01 12.01 11z"/>
+                                </svg>
+                                Add to What's New Viewer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BAS Tab Content -->
+            <div id="bas-tab" class="tab-content">
+                <div class="platform-specific bas">
+                    <h3>BAS Specific Settings</h3>
+                    
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label for="basTechnicalComponent">Technical Component:</label>
+                            <input type="text" id="basTechnicalComponent" value="APP_STUDIO">
+                        </div>
+                        <div class="form-group">
+                            <label for="basEnvironment">Environment:</label>
+                            <input type="text" id="basEnvironment" value="Cloud Foundry">
+                        </div>
+                    </div>
+
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label for="basAction">Action:</label>
+                            <select id="basAction">
+                                <option value="Info only">Info only</option>
+                                <option value="Required">Required</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="basLifecycle">Lifecycle:</label>
+                            <select id="basLifecycle">
+                                <option value="General Availability">General Availability</option>
+                                <option value="Beta">Beta</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label for="basType">Type:</label>
+                            <select id="basType">
+                                <option value="Changed">Changed</option>
+                                <option value="New">New</option>
+                                <option value="Deprecated">Deprecated</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="basProduct">Product:</label>
+                            <input type="text" id="basProduct" value="APP_STUDIO">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="basVersion">Version:</label>
+                        <select id="basVersionSelect" onchange="handleVersionSelect('bas')">
+                            <option value="T2505a">T2505a (3.06.2025)</option>
+                            <option value="T2505b">T2505b (15.06.2025)</option>
+                            <option value="T2506a">T2506a (29.06.2025)</option>
+                            <option value="T2506b">T2506b (13.07.2025)</option>
+                            <option value="T2507a">T2507a (27.07.2025)</option>
+                            <option value="T2507b">T2507b (10.08.2025)</option>
+                            <option value="T2508a">T2508a (24.08.2025)</option>
+                            <option value="T2508b">T2508b (7.09.2025)</option>
+                            <option value="T2509a">T2509a (21.09.2025)</option>
+                            <option value="T2509b">T2509b (5.10.2025)</option>
+                            <option value="T2510a">T2510a (19.10.2025)</option>
+                            <option value="T2510b">T2510b (2.11.2025)</option>
+                            <option value="T2511a">T2511a (16.11.2025)</option>
+                            <option value="T2511b">T2511b (30.11.2025)</option>
+                            <option value="T2512a">T2512a (14.12.2025)</option>
+                            <option value="T2512IL">T2512IL (28.12.2025)</option>
+                            <option value="T2512b">T2512b (11.01.2026)</option>
+                            <option value="T2513b">T2513b (25.01.2026)</option>
+                            <option value="other">Other...</option>
+                        </select>
+                        <input type="text" id="basVersionInput" placeholder="Enter custom version">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="basScope">Scope:</label>
+                        <select id="basScopeSelect" onchange="handleScopeSelect()">
+                            <option value="Not for sovereign cloud offerings" selected>Not for sovereign cloud offerings</option>
+                            <option value="other">Other...</option>
+                        </select>
+                        <input type="text" id="scopeInput" placeholder="Enter custom scope">
+                    </div>
+
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label for="basLineOfBusiness">Line of Business:</label>
+                            <input type="text" id="basLineOfBusiness" value="Technology">
+                        </div>
+                        <div class="form-group">
+                            <label for="basModularBusinessProcess">Modular Business Process:</label>
+                            <input type="text" id="basModularBusinessProcess" value="Not applicable">
+                        </div>
+                    </div>
+
+                    <div class="two-column">
+                        <div class="form-group">
+                            <label for="basLatestRevision">Latest Revision:</label>
+                            <input type="date" id="basLatestRevision" onchange="syncBasDates()">
+                        </div>
+                        <div class="form-group">
+                            <label for="basAvailableAsOf">Available as of:</label>
+                            <input type="date" id="basAvailableAsOf">
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <div class="controls-group">
+                            <button class="generate-btn bas" onclick="generateXML('bas')">Generate BAS XML</button>
+                            <button class="copy-btn" onclick="copyToClipboard()">Copy to Clipboard</button>
+                        </div>
+                        <div class="controls-group">
+                            <a href="https://help.sap.com/docs/help/27447f9c897a48c2939a7fd576657cc9/ed631d4ee2214e9f932b03d40b2c7e41.html?state=DRAFT" 
+                               target="_blank" 
+                               class="add-to-wnv-btn"
+                               onclick="copyToClipboardAndRedirect(event, 'bas')">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 15.01l1.41 1.41L11 14.84V19h2v-4.16l1.59 1.59L16 15.01 12.01 11z"/>
+                                </svg>
+                                Add to What's New Viewer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="output-section">
+            <label>Generated XML:</label>
+            <pre><code class="language-xml" id="xmlOutput"></code></pre>
+            <div class="copy-indicator" id="copyIndicator">Copied to clipboard!</div>
+        </div>
+
+        <!-- JIRA Comment Section -->
+        <div class="jira-section">
+            <h2>JIRA Comment Generator</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Generate formatted JIRA comments with documentation and What's New links using the reference links from above</p>
+            
+            <div class="jira-controls">
+                <div class="jira-actions">
+                    <button class="jira-btn generate-comment" onclick="generateJiraComment()">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
+                        </svg>
+                        Generate Comment
+                    </button>
+                    <button class="jira-btn copy-comment" onclick="copyJiraComment()">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                        </svg>
+                        Copy Comment
+                    </button>
+                </div>
+                <div class="jira-links" id="jiraLinksContainer">
+                    <!-- Dynamic JIRA links will be inserted here -->
+                </div>
+            </div>
+
+            <div class="jira-message" id="jiraMessage" style="display: none;">
+                <div class="message-content">
+                    <span class="message-text" id="jiraMessageText"></span>
+                </div>
+            </div>
+
+            <div class="jira-comment-output">
+                <label>Generated JIRA Comment:</label>
+                <textarea class="comment-editor" id="jiraCommentOutput" rows="8" placeholder="Generate a comment to see it here, then edit as needed..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-xml.min.js"></script>
+    <script>
+        // Initialize with default items
+        window.onload = function() {
+            const today = new Date();
+            document.getElementById('basLatestRevision').valueAsDate = today;
+            syncBasDates();
+            
+            // Add initial list items
+            addListItem();
+            addListItem();
+            
+            // Add initial reference link
+            addReferenceLink();
+
+            // Watch JIRA IDs input for dynamic link generation
+            document.getElementById('sharedJiraIds').addEventListener('input', updateJiraLinks);
+        };
+
+        function switchTab(platform) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.tab-button.${platform}`).classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`${platform}-tab`).classList.add('active');
+        }
+
+        function handleSharedTitleSelect() {
+            const select = document.getElementById('sharedTitleSelect');
+            const input = document.getElementById('titleInput');
+            input.classList.toggle('show', select.value === 'other');
+            if (select.value !== 'other') {
+                input.value = '';
+            }
+        }
+
+        function handleFeatureSelect(platform) {
+            const select = document.getElementById(`${platform}FeatureSelect`);
+            const input = document.getElementById(`${platform}FeatureInput`);
+            input.classList.toggle('show', select.value === 'other');
+            if (select.value !== 'other') {
+                input.value = '';
+                // Sync Version and Valid-as-Of for HDB when Feature ID changes
+                if (platform === 'hdb') {
+                    const versionSelect = document.getElementById('hdbVersionSelect');
+                    const rtcDateSelect = document.getElementById('hdbRtcDateSelect');
+                    if (select.value === 'HDB_WNV_QRC2_2025') {
+                        versionSelect.value = 'VERSION_QRC2_2025';
+                        rtcDateSelect.value = 'RTC_DATE_QRC2_2025';
+                    } else if (select.value === 'HDB_WNV_QRC3_2025') {
+                        versionSelect.value = 'VERSION_QRC3_2025';
+                        rtcDateSelect.value = 'RTC_DATE_QRC3_2025';
+                    } else if (select.value === 'HDB_WNV_QRC4_2025') {
+                        versionSelect.value = 'VERSION_QRC4_2025';
+                        rtcDateSelect.value = 'RTC_DATE_QRC4_2025';
+                    }
+                }
+            }
+        }
+
+        function handleVersionSelect(platform) {
+            const select = document.getElementById(`${platform}VersionSelect`);
+            const input = document.getElementById(`${platform}VersionInput`);
+            input.classList.toggle('show', select.value === 'other');
+            if (select.value !== 'other') {
+                input.value = '';
+                
+                if (platform === 'bas') {
+                    // Update date fields based on version selection for BAS
+                    const versionToDateMap = {
+                        'T2505a': '2025-06-03',
+                        'T2505b': '2025-06-15',
+                        'T2506a': '2025-06-29',
+                        'T2506b': '2025-07-13',
+                        'T2507a': '2025-07-27',
+                        'T2507b': '2025-08-10',
+                        'T2508a': '2025-08-24',
+                        'T2508b': '2025-09-07',
+                        'T2509a': '2025-09-21',
+                        'T2509b': '2025-10-05',
+                        'T2510a': '2025-10-19',
+                        'T2510b': '2025-11-02',
+                        'T2511a': '2025-11-16',
+                        'T2511b': '2025-11-30',
+                        'T2512a': '2025-12-14',
+                        'T2512IL': '2025-12-28',
+                        'T2512b': '2026-01-11',
+                        'T2513b': '2026-01-25'
+                    };
+                    
+                    const selectedDate = versionToDateMap[select.value];
+                    if (selectedDate) {
+                        document.getElementById('basLatestRevision').value = selectedDate;
+                        document.getElementById('basAvailableAsOf').value = selectedDate;
+                    }
+                }
+            }
+        }
+
+        function handleEntrySelect(platform, field) {
+            const select = document.getElementById(`${platform}${field.charAt(0).toUpperCase() + field.slice(1)}Select`);
+            const input = document.getElementById(`${platform}${field.charAt(0).toUpperCase() + field.slice(1)}Input`);
+            input.classList.toggle('show', select.value === 'other');
+            if (select.value !== 'other') {
+                input.value = '';
+            }
+        }
+
+        function handleScopeSelect() {
+            const select = document.getElementById('basScopeSelect');
+            const input = document.getElementById('scopeInput');
+            input.classList.toggle('show', select.value === 'other');
+            if (select.value !== 'other') {
+                input.value = '';
+            }
+        }
+
+        function handleRtcDateSelect(platform) {
+            const select = document.getElementById(`${platform}RtcDateSelect`);
+            const input = document.getElementById(`${platform}RtcDateInput`);
+            input.classList.toggle('show', select.value === 'other');
+            if (select.value !== 'other') {
+                input.value = '';
+            }
+        }
+
+        function handleEnvironmentSelect(platform) {
+            const allCheckbox = document.getElementById(`${platform}-env-all`);
+            const environmentCheckboxes = [
+                document.getElementById(`${platform}-env-cf`),
+                document.getElementById(`${platform}-env-kyma`),
+                document.getElementById(`${platform}-env-k8s`),
+                document.getElementById(`${platform}-env-other`)
+            ];
+            
+            if (event.target.id === `${platform}-env-all`) {
+                environmentCheckboxes.forEach(checkbox => {
+                    checkbox.checked = allCheckbox.checked;
+                });
+            } else {
+                const allOthersChecked = environmentCheckboxes.every(checkbox => checkbox.checked);
+                allCheckbox.checked = allOthersChecked;
+            }
+        }
+
+        function addListItem() {
+            const container = document.getElementById('listItemsContainer');
+            const div = document.createElement('div');
+            div.className = 'list-item';
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'list-item-input';
+            input.placeholder = 'Enter list item text';
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = 'Remove';
+            removeBtn.className = 'remove-btn';
+            removeBtn.onclick = () => div.remove();
+            
+            div.appendChild(input);
+            div.appendChild(removeBtn);
+            container.appendChild(div);
+        }
+
+        function addReferenceLink() {
+            const container = document.getElementById('referenceLinksContainer');
+            const div = document.createElement('div');
+            div.className = 'reference-link-item';
+            
+            const inputsDiv = document.createElement('div');
+            inputsDiv.className = 'reference-link-inputs';
+            
+            const textInput = document.createElement('input');
+            textInput.type = 'text';
+            textInput.className = 'ref-link-text';
+            textInput.placeholder = 'Topic title (e.g. Creating HDI Containers)';
+            
+            const urlInput = document.createElement('input');
+            urlInput.type = 'text';
+            urlInput.className = 'ref-link-url';
+            urlInput.placeholder = 'Link URL (e.g. https://help.sap.com/docs/...)';
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = 'Remove';
+            removeBtn.className = 'remove-btn';
+            removeBtn.onclick = () => {
+                div.remove();
+                if (container.children.length === 0) {
+                    addReferenceLink();
+                }
+            };
+            
+            inputsDiv.appendChild(textInput);
+            inputsDiv.appendChild(urlInput);
+            div.appendChild(inputsDiv);
+            div.appendChild(removeBtn);
+            container.appendChild(div);
+        }
+
+        function syncBasDates() {
+            const latestRevision = document.getElementById('basLatestRevision').value;
+            document.getElementById('basAvailableAsOf').value = latestRevision;
+        }
+
+        function formatDate(date) {
+            const [year, month, day] = date.split('-');
+            return `${year}-${month}-${day}`;
+        }
+
+        function generateXML(platform) {
+            // Get shared content
+            const titleSelect = document.getElementById('sharedTitleSelect');
+            const titleInput = document.getElementById('titleInput');
+            const title = titleSelect.value === 'other' ? titleInput.value : titleSelect.value;
+            const description = document.getElementById('sharedDescription').value;
+            const jiraIds = document.getElementById('sharedJiraIds').value;
+            const authorInitials = document.getElementById('authorInitials').value;
+
+            // Get list items
+            let listItems = Array.from(document.getElementsByClassName('list-item-input'))
+                .map(input => input.value)
+                .filter(value => value.trim() !== '');
+
+            // Get reference links
+            const refLinks = Array.from(document.getElementsByClassName('reference-link-item')).map(item => {
+                const inputs = item.getElementsByTagName('input');
+                return {
+                    text: inputs[0].value.trim(),
+                    url: inputs[1].value.trim()
+                };
+            }).filter(link => link.text && link.url);
+
+            let xml = '';
+
+            if (platform === 'hdb') {
+                xml = generateHDBXML(title, description, listItems, refLinks, jiraIds, authorInitials);
+            } else if (platform === 'bas') {
+                xml = generateBASXML(title, description, listItems, refLinks, jiraIds, authorInitials);
+            }
+
+            const xmlOutput = document.getElementById('xmlOutput');
+            xmlOutput.textContent = xml;
+            Prism.highlightElement(xmlOutput);
+        }
+
+        function generateHDBXML(title, description, listItems, refLinks, jiraIds, authorInitials) {
+            const featureSelect = document.getElementById('hdbFeatureSelect');
+            const featureInput = document.getElementById('hdbFeatureInput');
+            const feature = featureSelect.value === 'other' ? featureInput.value : featureSelect.value;
+            
+            const component = document.getElementById('hdbComponent').value;
+            const versionSelect = document.getElementById('hdbVersionSelect');
+            const versionInput = document.getElementById('hdbVersionInput');
+            const version = versionSelect.value === 'other' ? versionInput.value : versionSelect.value;
+            
+            const area = document.getElementById('hdbArea').value;
+            const categorySelect = document.getElementById('hdbCategorySelect');
+            const categoryInput = document.getElementById('hdbCategoryInput');
+            const category = categorySelect.value === 'other' ? categoryInput.value : categorySelect.value;
+            
+            const type = document.getElementById('hdbType').value;
+            const rtcDateSelect = document.getElementById('hdbRtcDateSelect');
+            const rtcDateInput = document.getElementById('hdbRtcDateInput');
+            const rtcDate = rtcDateSelect.value === 'other' ? rtcDateInput.value : rtcDateSelect.value;
+
+            // Get selected environments
+            const environmentCheckboxes = [
+                document.getElementById('hdb-env-cf'),
+                document.getElementById('hdb-env-kyma'),
+                document.getElementById('hdb-env-k8s'),
+                document.getElementById('hdb-env-other')
+            ];
+            const selectedEnvironments = environmentCheckboxes
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+
+            let xml = feature.trim() ? `<row feature="${feature}">\n` : `<row>\n`;
+            
+            xml += `    <entry>\n        <p conkeyref="loio165caba589c64bc3b6dee5405e819aac/${component}"/>\n    </entry>\n`;
+            xml += `    <entry>\n        <p conkeyref="loio165caba589c64bc3b6dee5405e819aac/${version}"/>\n    </entry>\n`;
+            xml += `    <entry>\n        <p conkeyref="loio165caba589c64bc3b6dee5405e819aac/${area}"/>\n    </entry>\n`;
+            xml += `    <entry>${category}</entry>\n`;
+            xml += `    <entry>${title}</entry>\n\n`;
+
+            // Main content
+            xml += `    <entry>\n`;
+            xml += `        <p>${description}</p>\n`;
+            if (listItems.length > 0) {
+                xml += `        <ul>\n`;
+                listItems.forEach(item => {
+                    xml += `            <li>${item}</li>\n`;
+                });
+                xml += `        </ul>\n`;
+            }
+
+            // Handle reference links
+            if (refLinks.length > 0) {
+                xml += `        <p>\n            See`;
+                if (refLinks.length === 1) {
+                    xml += `\n            <xref format="html" href="${refLinks[0].url}" scope="external">${refLinks[0].text}</xref>.\n`;
+                } else {
+                    xml += `:\n        </p>\n`;
+                    xml += `        <ul>\n`;
+                    refLinks.forEach(link => {
+                        xml += `            <li><xref format="html" href="${link.url}" scope="external">${link.text}</xref></li>\n`;
+                    });
+                    xml += `        </ul>\n`;
+                }
+                if (refLinks.length === 1) {
+                    xml += `        </p>\n`;
+                }
+            }
+            
+            if (jiraIds || authorInitials) {
+                if (jiraIds) {
+                    jiraIds.split(',').forEach(id => {
+                        const comment = authorInitials ? `${id.trim()} - ${authorInitials}` : id.trim();
+                        xml += `        <!--${comment}-->\n`;
+                    });
+                } else if (authorInitials) {
+                    xml += `        <!--${authorInitials}-->\n`;
+                }
+            }
+            xml += `    </entry>\n\n`;
+
+            // Additional information
+            xml += `    <entry outputclass="Action">\n        <p>Info only</p>\n    </entry>\n`;
+            xml += `    <entry>\n        <p conkeyref="loio165caba589c64bc3b6dee5405e819aac/${type}"/>\n    </entry>\n`;
+            xml += `    <entry outputclass="BTP_Environment">\n        <sl>\n`;
+            
+            selectedEnvironments.forEach(env => {
+                xml += `            <sli>${env}</sli>\n`;
+            });
+            xml += `        </sl>\n    </entry>\n`;
+            xml += `    <entry>\n        <p conkeyref="loio165caba589c64bc3b6dee5405e819aac/${rtcDate}"/>\n    </entry>\n`;
+            xml += `    <entry/>\n`;
+            xml += `    <entry outputclass="Line_of_Business">\n        <p>Technology</p>\n    </entry>\n`;
+            xml += `    <entry outputclass="Sub_Process">\n        <p>Not applicable</p>\n    </entry>\n`;
+            xml += `</row>`;
+
+            return xml;
+        }
+
+        function generateBASXML(title, description, listItems, refLinks, jiraIds, authorInitials) {
+            // Auto-convert title for BAS context
+            let basTitle = title;
+            if (title === 'SAP HANA Native Applications') {
+                basTitle = 'SAP HANA Development Tooling';
+            }
+            
+            const technicalComponent = document.getElementById('basTechnicalComponent').value;
+            const environment = document.getElementById('basEnvironment').value;
+            const action = document.getElementById('basAction').value;
+            const lifecycle = document.getElementById('basLifecycle').value;
+            const type = document.getElementById('basType').value;
+            const lob = document.getElementById('basLineOfBusiness').value;
+            const modularBusinessProcess = document.getElementById('basModularBusinessProcess').value;
+            const product = document.getElementById('basProduct').value;
+            const versionSelect = document.getElementById('basVersionSelect');
+            const versionInput = document.getElementById('basVersionInput');
+            const version = versionSelect.value === 'other' ? versionInput.value : versionSelect.value;
+            const scopeSelect = document.getElementById('basScopeSelect');
+            const scopeInput = document.getElementById('scopeInput');
+            const scope = scopeSelect.value === 'other' ? scopeInput.value : scopeSelect.value;
+            const latestRevision = formatDate(document.getElementById('basLatestRevision').value);
+            const availableAsOf = formatDate(document.getElementById('basAvailableAsOf').value);
+
+            const xml = `<row information_classification="internal" sap_product="future">
+    <entry>
+        <p><pname conkeyref="loioce0163ce7ae248d8b9128fbac31d58c2/${technicalComponent}"/></p>
+    </entry>
+    <entry outputclass="BTP_Environment">
+        <sl>
+            <sli>${environment}</sli>
+        </sl>
+    </entry>
+    <entry>
+        <p>${basTitle}</p>
+    </entry>
+    <entry>
+        <p>${description}</p>
+        ${listItems.length > 0 ? `
+        <ul>
+            ${listItems.map(item => `            <li>${item}</li>`).join('\n')}
+        </ul>` : ''}
+        ${refLinks.length > 0 ? `
+        <p>
+            See${refLinks.length === 1 ? 
+            `\n            <xref format="html" href="${refLinks[0].url}" scope="external">${refLinks[0].text}</xref>.` :
+            `:\n        </p>\n        <ul>\n${refLinks.map(link => 
+            `            <li><xref format="html" href="${link.url}" scope="external">${link.text}</xref></li>`).join('\n')}\n        </ul>`}
+        </p>` : ''}
+        ${jiraIds || authorInitials ? 
+            (jiraIds ? jiraIds.split(',').map(id => {
+                const comment = authorInitials ? `${id.trim()} - ${authorInitials}` : id.trim();
+                return `        <!--${comment}-->`;
+            }).join('\n') + '\n' : (authorInitials ? `        <!--${authorInitials}-->\n` : ''))
+        : ''}
+    </entry>
+    <entry outputclass="Action">
+        <p>${action}</p>
+    </entry>
+    <entry outputclass="Software_Lifecycle">
+        <p>${lifecycle}</p>
+    </entry>
+    <entry outputclass="BTP_Type">
+        <p>${type}</p>
+    </entry>
+    <entry outputclass="Line_of_Business">
+        <p>${lob}</p>
+    </entry>
+    <entry outputclass="Sub_Process">
+        <p>${modularBusinessProcess}</p>
+    </entry>
+    <entry outputclass="Product"><pname conkeyref="loioce0163ce7ae248d8b9128fbac31d58c2/${product}"/></entry>
+    <entry>
+        <p outputclass="Latest_Revision" translate="no">${latestRevision}</p>
+    </entry>
+    <entry>
+        <p outputclass="Valid_as_Of" translate="no">${availableAsOf}</p>
+    </entry>
+    <entry>
+        <p>${version}</p>
+    </entry>
+    <entry>
+        <p>${scope}</p>
+    </entry>
+</row>`;
+
+            return xml;
+        }
+
+        function copyToClipboard() {
+            const xmlOutput = document.getElementById('xmlOutput');
+            navigator.clipboard.writeText(xmlOutput.textContent)
+                .then(() => {
+                    const indicator = document.getElementById('copyIndicator');
+                    indicator.classList.add('show');
+                    setTimeout(() => {
+                        indicator.classList.remove('show');
+                    }, 2000);
+                })
+                .catch(err => console.error('Failed to copy: ', err));
+        }
+
+        function copyToClipboardAndRedirect(event, platform) {
+            // First copy the XML
+            const xmlOutput = document.getElementById('xmlOutput');
+            if (xmlOutput.textContent.trim()) {
+                navigator.clipboard.writeText(xmlOutput.textContent)
+                    .then(() => {
+                        const indicator = document.getElementById('copyIndicator');
+                        indicator.classList.add('show');
+                        setTimeout(() => {
+                            indicator.classList.remove('show');
+                        }, 2000);
+                    })
+                    .catch(err => console.error('Failed to copy: ', err));
+            } else {
+                event.preventDefault();
+                alert('Please generate XML content first before adding to What\'s New Viewer.');
+            }
+        }
+
+        // JIRA Comment Functions
+        function updateJiraLinks() {
+            const jiraIds = document.getElementById('sharedJiraIds').value;
+            const container = document.getElementById('jiraLinksContainer');
+            
+            container.innerHTML = '';
+            
+            if (jiraIds.trim()) {
+                const ids = jiraIds.split(',').map(id => id.trim()).filter(id => id);
+                
+                ids.forEach(id => {
+                    const link = document.createElement('a');
+                    link.href = `https://jira.tools.sap/browse/${id}`;
+                    link.target = '_blank';
+                    link.className = 'jira-link-btn';
+                    link.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+                        </svg>
+                        Add to JIRA ${id}
+                    `;
+                    container.appendChild(link);
+                });
+            }
+        }
+
+        function showJiraMessage(message, isError = false) {
+            const messageDiv = document.getElementById('jiraMessage');
+            const messageText = document.getElementById('jiraMessageText');
+            
+            messageText.textContent = message;
+            messageDiv.className = isError ? 'jira-message error' : 'jira-message';
+            messageDiv.style.display = 'block';
+            
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+
+
+        function generateJiraComment() {
+            let comment = '';
+            
+            // Get reference links from the form above
+            const refLinks = Array.from(document.getElementsByClassName('reference-link-item')).map(item => {
+                const inputs = item.getElementsByTagName('input');
+                return {
+                    text: inputs[0].value.trim(),
+                    url: inputs[1].value.trim()
+                };
+            }).filter(link => link.text && link.url);
+            
+            // Documentation section - always show header
+            comment += 'Added documentation:\n';
+            if (refLinks.length > 0) {
+                refLinks.forEach(link => {
+                    comment += `${link.text}: ${link.url}\n`;
+                });
+            } else {
+                comment += '[Add your documentation links here]\n';
+            }
+            comment += '\n';
+            
+            // What's New entries section
+            const hanaWnvUrl = 'https://help.sap.com/docs/hana-cloud/f32bc8f64284414b91626b0166e610f3/b2de621c8ed74056add2e0103af66c40.html?state=DRAFT&version=dev';
+            const basWnvUrl = 'https://help.sap.com/docs/help/27447f9c897a48c2939a7fd576657cc9/ed631d4ee2214e9f932b03d40b2c7e41.html?state=DRAFT';
+            
+            comment += 'Added What\'s New entries:\n';
+            comment += `• HANA Cloud: ${hanaWnvUrl}\n`;
+            comment += `• Business Application Studio: ${basWnvUrl}`;
+            
+            // Display the generated comment
+            const output = document.getElementById('jiraCommentOutput');
+            output.value = comment;
+            output.classList.add('has-content');
+        }
+
+        function copyJiraComment() {
+            const commentOutput = document.getElementById('jiraCommentOutput');
+            const comment = commentOutput.value.trim();
+            
+            if (comment && comment !== '') {
+                navigator.clipboard.writeText(comment)
+                    .then(() => {
+                        showJiraMessage('✅ Comment copied to clipboard! Ready to paste in JIRA.');
+                        
+                        // Visual feedback on textarea
+                        const originalBackground = commentOutput.style.background;
+                        const originalBorderColor = commentOutput.style.borderColor;
+                        
+                        commentOutput.style.background = '#d4edda';
+                        commentOutput.style.borderColor = '#c3e6cb';
+                        
+                        setTimeout(() => {
+                            commentOutput.style.background = originalBackground || '#ffffff';
+                            commentOutput.style.borderColor = originalBorderColor || '#28a745';
+                        }, 1500);
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy comment: ', err);
+                        showJiraMessage('❌ Failed to copy comment to clipboard', true);
+                    });
+            } else {
+                showJiraMessage('⚠️ Please generate a comment first', true);
+            }
+        }
+    </script>
+
+    <script data-goatcounter="https://wnv-counter.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

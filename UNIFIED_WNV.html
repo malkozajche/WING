@@ -1442,11 +1442,92 @@
 
         let tagPairCounter = 0;
 
+        // Version to date mapping for BAS auto-selection
+        const basVersionToDateMap = {
+            'T2505a': '2025-06-03',
+            'T2505b': '2025-06-15',
+            'T2506a': '2025-06-29',
+            'T2506b': '2025-07-13',
+            'T2507a': '2025-07-27',
+            'T2507b': '2025-08-10',
+            'T2508a': '2025-08-24',
+            'T2508b': '2025-09-07',
+            'T2509a': '2025-09-21',
+            'T2509b': '2025-10-05',
+            'T2510a': '2025-10-19',
+            'T2510b': '2025-11-02',
+            'T2511a': '2025-11-16',
+            'T2511b': '2025-11-30',
+            'T2512a': '2025-12-14',
+            'T2512IL': '2025-12-28',
+            'T2512b': '2026-01-11',
+            'T2513b': '2026-01-25',
+            'T2601a': '2026-02-04',
+            'T2601b': '2026-02-18',
+            'T2602a': '2026-03-04',
+            'T2602b': '2026-03-18',
+            'T2603a': '2026-03-31',
+            'T2603b': '2026-04-15',
+            'T2604a': '2026-04-29',
+            'T2604b': '2026-05-13',
+            'T2605a': '2026-05-27',
+            'T2605b': '2026-06-10',
+            'T2606a': '2026-06-24',
+            'T2606b': '2026-07-08',
+            'T2607a': '2026-07-22',
+            'T2607b': '2026-08-05',
+            'T2608a': '2026-08-19',
+            'T2608b': '2026-09-02',
+            'T2609a': '2026-09-16',
+            'T2609b': '2026-09-30',
+            'T2610a': '2026-10-14',
+            'T2610b': '2026-10-28',
+            'T2611a': '2026-11-11',
+            'T2611b': '2026-11-25',
+            'T2612a': '2026-12-09',
+            'T2612b': '2026-12-23'
+        };
+
+        // Find nearest future release version for BAS
+        function getNearestFutureBASVersion() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            let nearestVersion = null;
+            let nearestDate = null;
+
+            for (const [version, dateStr] of Object.entries(basVersionToDateMap)) {
+                const releaseDate = new Date(dateStr);
+                if (releaseDate >= today) {
+                    if (!nearestDate || releaseDate < nearestDate) {
+                        nearestDate = releaseDate;
+                        nearestVersion = version;
+                    }
+                }
+            }
+
+            // If no future release found, return the last one
+            if (!nearestVersion) {
+                const versions = Object.keys(basVersionToDateMap);
+                nearestVersion = versions[versions.length - 1];
+            }
+
+            return nearestVersion;
+        }
+
         // Initialize with default items
         window.onload = function() {
-            const today = new Date();
-            document.getElementById('basLatestRevision').valueAsDate = today;
-            syncBasDates();
+            // Set nearest future BAS release as default
+            const nearestVersion = getNearestFutureBASVersion();
+            const versionSelect = document.getElementById('basVersionSelect');
+            versionSelect.value = nearestVersion;
+
+            // Set dates based on selected version
+            const selectedDate = basVersionToDateMap[nearestVersion];
+            if (selectedDate) {
+                document.getElementById('basLatestRevision').value = selectedDate;
+                document.getElementById('basAvailableAsOf').value = selectedDate;
+            }
 
             // Add initial list items
             addListItem();
@@ -1597,55 +1678,9 @@
             input.classList.toggle('show', select.value === 'other');
             if (select.value !== 'other') {
                 input.value = '';
-                
+
                 if (platform === 'bas') {
-                    // Update date fields based on version selection for BAS
-                    const versionToDateMap = {
-                        'T2505a': '2025-06-03',
-                        'T2505b': '2025-06-15',
-                        'T2506a': '2025-06-29',
-                        'T2506b': '2025-07-13',
-                        'T2507a': '2025-07-27',
-                        'T2507b': '2025-08-10',
-                        'T2508a': '2025-08-24',
-                        'T2508b': '2025-09-07',
-                        'T2509a': '2025-09-21',
-                        'T2509b': '2025-10-05',
-                        'T2510a': '2025-10-19',
-                        'T2510b': '2025-11-02',
-                        'T2511a': '2025-11-16',
-                        'T2511b': '2025-11-30',
-                        'T2512a': '2025-12-14',
-                        'T2512IL': '2025-12-28',
-                        'T2512b': '2026-01-11',
-                        'T2513b': '2026-01-25',
-                        'T2601a': '2026-02-04',
-                        'T2601b': '2026-02-18',
-                        'T2602a': '2026-03-04',
-                        'T2602b': '2026-03-18',
-                        'T2603a': '2026-03-31',
-                        'T2603b': '2026-04-15',
-                        'T2604a': '2026-04-29',
-                        'T2604b': '2026-05-13',
-                        'T2605a': '2026-05-27',
-                        'T2605b': '2026-06-10',
-                        'T2606a': '2026-06-24',
-                        'T2606b': '2026-07-08',
-                        'T2607a': '2026-07-22',
-                        'T2607b': '2026-08-05',
-                        'T2608a': '2026-08-19',
-                        'T2608b': '2026-09-02',
-                        'T2609a': '2026-09-16',
-                        'T2609b': '2026-09-30',
-                        'T2610a': '2026-10-14',
-                        'T2610b': '2026-10-28',
-                        'T2611a': '2026-11-11',
-                        'T2611b': '2026-11-25',
-                        'T2612a': '2026-12-09',
-                        'T2612b': '2026-12-23'
-                    };
-                    
-                    const selectedDate = versionToDateMap[select.value];
+                    const selectedDate = basVersionToDateMap[select.value];
                     if (selectedDate) {
                         document.getElementById('basLatestRevision').value = selectedDate;
                         document.getElementById('basAvailableAsOf').value = selectedDate;

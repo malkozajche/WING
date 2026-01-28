@@ -1515,6 +1515,52 @@
             return nearestVersion;
         }
 
+        // Get current QRC based on today's date
+        function getCurrentQRC() {
+            const today = new Date();
+            const month = today.getMonth(); // 0-11
+            const year = today.getFullYear();
+
+            let qrc;
+            if (month >= 0 && month <= 2) qrc = 1;      // Q1: Jan-Mar
+            else if (month >= 3 && month <= 5) qrc = 2; // Q2: Apr-Jun
+            else if (month >= 6 && month <= 8) qrc = 3; // Q3: Jul-Sep
+            else qrc = 4;                                // Q4: Oct-Dec
+
+            return { qrc, year };
+        }
+
+        // Set default QRC selections for HDB
+        function initializeHDBQRCDefaults() {
+            const { qrc, year } = getCurrentQRC();
+
+            // Feature ID format differs by year
+            let featureValue;
+            if (year === 2025) {
+                featureValue = `HDB_WNV_QRC${qrc}_2025`;
+            } else {
+                featureValue = `HDB_WNV_${year}_QRC${qrc}`;
+            }
+
+            const versionValue = `VERSION_QRC${qrc}_${year}`;
+            const rtcDateValue = `RTC_DATE_QRC${qrc}_${year}`;
+
+            // Set values if options exist
+            const featureSelect = document.getElementById('hdbFeatureSelect');
+            const versionSelect = document.getElementById('hdbVersionSelect');
+            const rtcDateSelect = document.getElementById('hdbRtcDateSelect');
+
+            if (featureSelect && featureSelect.querySelector(`option[value="${featureValue}"]`)) {
+                featureSelect.value = featureValue;
+            }
+            if (versionSelect && versionSelect.querySelector(`option[value="${versionValue}"]`)) {
+                versionSelect.value = versionValue;
+            }
+            if (rtcDateSelect && rtcDateSelect.querySelector(`option[value="${rtcDateValue}"]`)) {
+                rtcDateSelect.value = rtcDateValue;
+            }
+        }
+
         // Initialize with default items
         window.onload = function() {
             // Set nearest future BAS release as default
@@ -1528,6 +1574,9 @@
                 document.getElementById('basLatestRevision').value = selectedDate;
                 document.getElementById('basAvailableAsOf').value = selectedDate;
             }
+
+            // Initialize HDB QRC defaults
+            initializeHDBQRCDefaults();
 
             // Add initial list items
             addListItem();

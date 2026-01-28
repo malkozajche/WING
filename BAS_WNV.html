@@ -341,28 +341,32 @@
         }
 
         .format-btn {
-            padding: 0.4rem 1rem;
+            padding: 0.2rem 0.75rem;
             background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
             border: none;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
             color: white;
-            box-shadow: 0 2px 4px rgba(0, 112, 242, 0.2);
+            box-shadow: 0 1px 3px rgba(0, 112, 242, 0.2);
             font-family: inherit;
         }
 
         .format-btn:hover {
             background: linear-gradient(135deg, #0056b3 0%, #2563eb 100%);
             transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0, 112, 242, 0.3);
+            box-shadow: 0 2px 4px rgba(0, 112, 242, 0.3);
         }
 
         .format-btn:active {
             transform: translateY(0);
             box-shadow: 0 1px 2px rgba(0, 112, 242, 0.2);
+        }
+
+        .rich-textarea .tagged-text {
+            font-weight: 600;
         }
 
         .textarea-with-toolbar {
@@ -580,18 +584,49 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-xml.min.js"></script>
     <script>
+        // Setup tag deletion observer for rich textareas
+        function setupTagObserver(elementId) {
+            const element = document.getElementById(elementId);
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    mutation.removedNodes.forEach((node) => {
+                        if (node.nodeType === 1 && node.classList && node.classList.contains('dita-tag')) {
+                            const pairId = node.dataset.pairId;
+                            if (pairId) {
+                                // Find and remove the paired tag and text span
+                                const pairedTag = element.querySelector(`[data-pair-id="${pairId}"]`);
+                                const textSpan = element.querySelector(`[data-text-id="${pairId}"]`);
+                                if (pairedTag) pairedTag.remove();
+                                if (textSpan) {
+                                    // Replace span with its text content (unbold)
+                                    const text = document.createTextNode(textSpan.textContent);
+                                    textSpan.parentNode.replaceChild(text, textSpan);
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+            observer.observe(element, { childList: true, subtree: true });
+        }
+
+        let tagPairCounter = 0;
+
         // Initialize with default items
         window.onload = function() {
             const today = new Date();
             document.getElementById('latestRevision').valueAsDate = today;
             syncDates(); // This will set the availableAsOf date
-            
+
             // Add initial list items
             addListItem();
             addListItem();
-            
+
             // Add initial reference link
             addReferenceLink();
+
+            // Initialize observer for description
+            setupTagObserver('description');
         };
 
         function formatText(elementId, tag) {
@@ -603,30 +638,41 @@
 
                 if (element.contains(range.commonAncestorContainer)) {
                     const selectedText = range.toString();
+                    const pairId = `tag-${++tagPairCounter}`;
 
+                    // Create opening tag span
                     const openTag = document.createElement('span');
                     openTag.className = `dita-tag ${tag}-open`;
                     openTag.textContent = `<${tag}>`;
                     openTag.contentEditable = 'false';
+                    openTag.dataset.pairId = pairId;
 
+                    // Create closing tag span
                     const closeTag = document.createElement('span');
                     closeTag.className = `dita-tag ${tag}-close`;
                     closeTag.textContent = `</${tag}>`;
                     closeTag.contentEditable = 'false';
+                    closeTag.dataset.pairId = pairId;
+
+                    // Create text span (bold)
+                    const textSpan = document.createElement('span');
+                    textSpan.className = 'tagged-text';
+                    textSpan.dataset.textId = pairId;
+                    textSpan.textContent = selectedText || '\u200B';
 
                     if (selectedText) {
                         range.deleteContents();
                         range.insertNode(closeTag);
-                        range.insertNode(document.createTextNode(selectedText));
+                        range.insertNode(textSpan);
                         range.insertNode(openTag);
                         range.setStartAfter(closeTag);
                         range.setEndAfter(closeTag);
                     } else {
                         range.insertNode(closeTag);
-                        range.insertNode(document.createTextNode('\u200B'));
+                        range.insertNode(textSpan);
                         range.insertNode(openTag);
-                        range.setStart(closeTag.previousSibling, 0);
-                        range.setEnd(closeTag.previousSibling, 0);
+                        range.setStart(textSpan, 0);
+                        range.setEnd(textSpan, 0);
                     }
 
                     selection.removeAllRanges();
@@ -640,11 +686,15 @@
             const element = document.getElementById(elementId);
             let content = element.innerHTML;
 
+            // Convert visible tag spans back to actual DITA tags
             content = content.replace(/<span[^>]*class="dita-tag codeph-open"[^>]*>&lt;codeph&gt;<\/span>/gi, '<codeph>');
             content = content.replace(/<span[^>]*class="dita-tag codeph-close"[^>]*>&lt;\/codeph&gt;<\/span>/gi, '</codeph>');
             content = content.replace(/<span[^>]*class="dita-tag uicontrol-open"[^>]*>&lt;uicontrol&gt;<\/span>/gi, '<uicontrol>');
             content = content.replace(/<span[^>]*class="dita-tag uicontrol-close"[^>]*>&lt;\/uicontrol&gt;<\/span>/gi, '</uicontrol>');
+            // Remove tagged-text spans but keep content
+            content = content.replace(/<span[^>]*class="tagged-text"[^>]*>(.*?)<\/span>/gi, '$1');
 
+            // Clean up HTML
             content = content.replace(/<br\s*\/?>/gi, ' ');
             content = content.replace(/<div>/gi, ' ');
             content = content.replace(/<\/div>/gi, '');

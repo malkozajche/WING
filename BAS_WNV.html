@@ -335,13 +335,14 @@
 
         .formatting-toolbar::before {
             content: 'Format:';
-            font-size: 0.75rem;
+            font-size: 0.85rem;
+            font-weight: 500;
             color: var(--text-muted);
-            margin-right: 0.25rem;
+            margin-right: 0.5rem;
         }
 
         .format-btn {
-            padding: 0.2rem 0.75rem;
+            padding: 0.15rem 0.6rem;
             background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
             border: none;
             border-radius: 12px;
@@ -456,7 +457,7 @@
                 <button type="button" class="format-btn" onclick="formatText('description', 'codeph')" title="Code/technical term">codeph</button>
                 <button type="button" class="format-btn" onclick="formatText('description', 'uicontrol')" title="UI element">uicontrol</button>
             </div>
-            <div id="description" class="rich-textarea" contenteditable="true" data-placeholder="Enter the main description. Select text and use buttons above to add DITA formatting."></div>
+            <div id="description" class="rich-textarea" contenteditable="true" data-placeholder="Explain what's new or changed and why it matters to users"></div>
             
             <div id="listItems" class="list-items">
                 <label>List Items:</label>

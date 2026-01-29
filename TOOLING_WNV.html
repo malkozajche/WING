@@ -742,12 +742,14 @@
                 <div class="form-group">
                     <label for="rtcDateInput">Valid as Of:</label>
                     <input type="date" id="rtcDateInput" />
+                    <label style="display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="futureDateCheckbox" onchange="handleFutureDateToggle()">
+                        Use future date (1.01.2050)
+                    </label>
                 </div>
-                
+
                 <label>Lifecycle:</label>
                 <input type="text" id="lifecycle" value="" readonly>
-                <label>Line of Business:</label>
-                <input type="text" id="lineOfBusiness" value="Technology" readonly>
                 <label>Modular Business Process:</label>
                 <input type="text" id="subProcess" value="Not applicable" readonly>
             </div>
@@ -797,6 +799,19 @@
         // Set default date to today
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('rtcDateInput').value = today;
+
+        // Handle future date toggle
+        function handleFutureDateToggle() {
+            const checkbox = document.getElementById('futureDateCheckbox');
+            const dateInput = document.getElementById('rtcDateInput');
+            if (checkbox.checked) {
+                dateInput.value = '2050-01-01';
+                dateInput.disabled = true;
+            } else {
+                dateInput.disabled = false;
+                dateInput.value = new Date().toISOString().split('T')[0];
+            }
+        }
 
         // Setup tag deletion observer for rich textareas
         function setupTagObserver(elementId) {
@@ -1120,7 +1135,6 @@
             xml += `        </sl>\n    </entry>\n`;
             xml += `    <entry>\n        <p>${rtcDateValue}</p>\n    </entry>\n`;
             xml += `    <entry/>\n`;
-            xml += `    <entry outputclass="Line_of_Business">\n        <p>Technology</p>\n    </entry>\n`;
             xml += `    <entry outputclass="Sub_Process">\n        <p>Not applicable</p>\n    </entry>\n`;
             xml += `</row>`;
 

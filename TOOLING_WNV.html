@@ -1128,7 +1128,12 @@
             xml += `    <entry>\n        <p conkeyref="loio165caba589c64bc3b6dee5405e819aac/${component}"/>\n    </entry>\n`;
             xml += `    <entry>\n        <p conkeyref="loio165caba589c64bc3b6dee5405e819aac/${versionValue}"/>\n    </entry>\n`;
             xml += `    <entry>\n        <p conkeyref="loio165caba589c64bc3b6dee5405e819aac/${getEntryValue(3)}"/>\n    </entry>\n`;
-            xml += `    <entry>${getEntryValue(4)}</entry>\n`;
+            const category = getEntryValue(4);
+            if (category === 'SAP HANA Cloud Central') {
+                xml += `    <entry>\n        <p conkeyref="loio165caba589c64bc3b6dee5405e819aac/COMP_HCC"/>\n    </entry>\n`;
+            } else {
+                xml += `    <entry>${category}</entry>\n`;
+            }
             xml += `    <entry>${getEntryValue(5)}</entry>\n\n`;
 
             // Main content
@@ -1198,7 +1203,7 @@
                 xml += `            <sli>${env}</sli>\n`;
             });
             xml += `        </sl>\n    </entry>\n`;
-            xml += `    <entry>\n        <p>${rtcDateValue}</p>\n    </entry>\n`;
+            xml += `    <entry>${rtcDateValue}</entry>\n`;
             xml += `    <entry/>\n`;
             xml += `    <entry outputclass="Line_of_Business">\n        <p>Technology</p>\n    </entry>\n`;
             xml += `    <entry outputclass="Sub_Process">\n        <p>Not applicable</p>\n    </entry>\n`;

@@ -201,7 +201,7 @@
             margin-bottom: 15px;
         }
 
-        pre[class*="language-"], 
+        pre[class*="language-"],
         code[class*="language-"] {
             background: transparent !important;
             color: #2a2a2a !important;
@@ -533,7 +533,7 @@
             border-radius: 0 0 6px 6px;
             font-family: inherit;
             font-size: 0.95rem;
-            line-height: 1.8;
+            line-height: 1.6;
             background: white;
             overflow-y: auto;
             resize: vertical;
@@ -571,6 +571,62 @@
             color: #1e40af;
             border: 1px solid #93c5fd;
         }
+
+        .date-picker-container {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .date-picker-container input[type="date"] {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .quick-date-buttons {
+            display: flex;
+            gap: 0.35rem;
+            flex-wrap: wrap;
+            align-items: stretch;
+        }
+
+        .quick-date-btn {
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            background: #f1f5f9;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            white-space: nowrap;
+            flex: 1;
+            min-width: 90px;
+            line-height: 1.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quick-date-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .quick-date-btn.future {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-color: #fcd34d;
+            color: #92400e;
+        }
+
+        .quick-date-btn.future:hover {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border-color: #d97706;
+        }
     </style>
 </head>
 <body>
@@ -582,12 +638,12 @@
     </a>
     <div class="container">
         <h1>SAP HANA What's New XML Generator</h1>
-        
+
         <form id="xmlForm">
             <div class="form-group">
                 <label for="featureInput">Feature ID:</label>
                 <input type="text" id="featureInput" placeholder="e.g. hana.hcs.show_subaccount_hdi_containers (HANATOOLING_ added automatically)" oninput="checkFeaturePrefix()">
-                <span id="featurePrefixWarning" style="color: #d32f2f; display: none;">⚠️ The prefix HANATOOLING_ is added automatically. Enter the ID without the prefix.</span>
+                <span id="featurePrefixWarning" style="color: #d32f2f; display: none;">The prefix HANATOOLING_ is added automatically. Enter the ID without the prefix.</span>
             </div>
 
             <div class="form-group">
@@ -595,9 +651,9 @@
                 <select id="component" onchange="handleComponentSelect()">
                     <option value="COMP_HANA_DB">SAP HANA Database</option>
                     <option value="COMP_HANA_CLOUD" selected>SAP HANA Cloud</option>
-                    <option value="COMP_DL">Data Lake</option>                    
+                    <option value="COMP_DL">Data Lake</option>
                 </select>
-                
+
                 <div class="entry-container">
                     <label>Version:</label>
                     <select id="versionSelect" onchange="handleVersionSelect()">
@@ -662,9 +718,11 @@
                     <input type="text" id="entry4Input" placeholder="Enter custom value">
                 </div>
 
-                <div class="form-group">
-                    <label for="entry5Input">Title:</label>
-                    <input type="text" id="entry5Input" placeholder="Enter title">
+                <div class="title-section">
+                    <div class="entry-container">
+                        <label>Title:</label>
+                        <input type="text" id="entry5Input" placeholder="Enter title" class="show">
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -674,7 +732,7 @@
                         <button type="button" class="format-btn" onclick="formatText('mainParagraph', 'uicontrol')" title="UI element">uicontrol</button>
                     </div>
                     <div id="mainParagraph" class="rich-textarea" contenteditable="true" data-placeholder="Explain what's new or changed and why it matters to users"></div>
-                    
+
                     <div id="listItems" class="list-items">
                         <label>List Items (optional):</label>
                         <div id="listItemsContainer"></div>
@@ -686,7 +744,7 @@
                         <div id="referenceLinksContainer"></div>
                         <button type="button" class="add-btn" onclick="addReferenceLink()">Add Reference Link</button>
                     </div>
-                    
+
                     <div style="display: flex; gap: 1rem; align-items: end;">
                         <div style="flex: 2;">
                             <label>JIRA IDs (optional):</label>
@@ -738,16 +796,20 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="form-group">
-                    <label for="rtcDateInput">Valid as Of:</label>
-                    <input type="date" id="rtcDateInput" />
+
+                <div class="entry-container">
+                    <label>Valid as Of:</label>
+                    <div class="date-picker-container">
+                        <input type="date" id="rtcDateInput" class="show" />
+                        <div class="quick-date-buttons">
+                            <button type="button" class="quick-date-btn" onclick="setQuickDate('today')" title="Today's date">Today</button>
+                            <button type="button" class="quick-date-btn future" onclick="setQuickDate('future')" title="Placeholder for future release">Future</button>
+                        </div>
+                    </div>
                 </div>
-                
+
                 <label>Lifecycle:</label>
                 <input type="text" id="lifecycle" value="" readonly>
-                <label>Line of Business:</label>
-                <input type="text" id="lineOfBusiness" value="Technology" readonly>
                 <label>Modular Business Process:</label>
                 <input type="text" id="subProcess" value="Not applicable" readonly>
             </div>
@@ -759,8 +821,8 @@
                 <button onclick="copyToClipboard()">Copy to Clipboard</button>
             </div>
             <div class="divider"></div>
-            <a href="https://help.sap.com/docs/HANA_CLOUD/620311aac2174332923047ec914a1845/9b7c15c1533c4f19aa557e4910159026.html" 
-               target="_blank" 
+            <a href="https://help.sap.com/docs/HANA_CLOUD/620311aac2174332923047ec914a1845/9b7c15c1533c4f19aa557e4910159026.html"
+               target="_blank"
                class="add-to-wnv-btn"
                onclick="copyToClipboardAndRedirect(event)">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -797,6 +859,22 @@
         // Set default date to today
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('rtcDateInput').value = today;
+
+        function setQuickDate(preset) {
+            const dateInput = document.getElementById('rtcDateInput');
+
+            if (preset === 'future') {
+                // Set to 2050-01-01 directly to avoid timezone issues
+                dateInput.value = '2050-01-01';
+            } else {
+                // Today - format manually to avoid timezone issues
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                dateInput.value = `${year}-${month}-${day}`;
+            }
+        }
 
         // Setup tag deletion observer for rich textareas
         function setupTagObserver(elementId) {
@@ -916,17 +994,17 @@
             const container = document.getElementById('listItemsContainer');
             const div = document.createElement('div');
             div.className = 'list-item';
-            
+
             const input = document.createElement('input');
             input.type = 'text';
             input.className = 'list-item-input';
             input.placeholder = 'Enter list item text';
-            
+
             const removeBtn = document.createElement('button');
             removeBtn.textContent = 'Remove';
             removeBtn.className = 'remove-btn';
             removeBtn.onclick = () => div.remove();
-            
+
             div.appendChild(input);
             div.appendChild(removeBtn);
             container.appendChild(div);
@@ -956,7 +1034,7 @@
                 document.getElementById('env-k8s'),
                 document.getElementById('env-other')
             ];
-            
+
             if (event.target.id === 'env-all') {
                 // If "Select All" is clicked, toggle all other checkboxes
                 environmentCheckboxes.forEach(checkbox => {
@@ -973,20 +1051,20 @@
             const container = document.getElementById('referenceLinksContainer');
             const div = document.createElement('div');
             div.className = 'reference-link-item';
-            
+
             const inputsDiv = document.createElement('div');
             inputsDiv.className = 'reference-link-inputs';
-            
+
             const textInput = document.createElement('input');
             textInput.type = 'text';
             textInput.className = 'ref-link-text';
             textInput.placeholder = 'Topic title (e.g. Creating HDI Containers)';
-            
+
             const urlInput = document.createElement('input');
             urlInput.type = 'text';
             urlInput.className = 'ref-link-url';
             urlInput.placeholder = 'Link URL (e.g. https://help.sap.com/docs/...)';
-            
+
             const removeBtn = document.createElement('button');
             removeBtn.textContent = 'Remove';
             removeBtn.className = 'remove-btn';
@@ -996,7 +1074,7 @@
                     addReferenceLink(); // Ensure at least one reference link input exists
                 }
             };
-            
+
             inputsDiv.appendChild(textInput);
             inputsDiv.appendChild(urlInput);
             div.appendChild(inputsDiv);
@@ -1011,7 +1089,7 @@
                 featureInput = featureInput.substring(12); // Remove the prefix
             }
             const feature = featureInput ? 'HANATOOLING_' + featureInput : '';
-            
+
             function getEntryValue(num) {
                 if (num === 3) {
                     return document.getElementById('areaSelect').value;
@@ -1027,7 +1105,7 @@
             const mainParagraph = getFormattedContent('mainParagraph');
             const jiraIds = document.getElementById('jiraIds').value;
             const authorInitials = document.getElementById('authorInitials').value;
-            
+
             // Get version value
             const versionSelect = document.getElementById('versionSelect');
             const versionInput = document.getElementById('versionInput');
@@ -1036,13 +1114,13 @@
             // Get RTC date value
             const rtcDateInput = document.getElementById('rtcDateInput');
             const rtcDateValue = rtcDateInput.value;
-            
+
             let listItems = Array.from(document.getElementsByClassName('list-item-input'))
                 .map(input => input.value)
                 .filter(value => value.trim() !== '');
 
             let xml = feature.trim() ? `<row feature="${feature}">\n` : `<row>\n`;
-            
+
             // Standard entries
             const component = document.getElementById('component').value;
             xml += `    <entry>\n        <p conkeyref="loio165caba589c64bc3b6dee5405e819aac/${component}"/>\n    </entry>\n`;
@@ -1087,7 +1165,7 @@
                     xml += `        </p>\n`;
                 }
             }
-            
+
             if (jiraIds || authorInitials) {
                 if (jiraIds) {
                     jiraIds.split(',').forEach(id => {
@@ -1113,14 +1191,13 @@
             const selectedEnvironments = environmentCheckboxes
                 .filter(checkbox => checkbox.checked)
                 .map(checkbox => checkbox.value);
-            
+
             selectedEnvironments.forEach(env => {
                 xml += `            <sli>${env}</sli>\n`;
             });
             xml += `        </sl>\n    </entry>\n`;
             xml += `    <entry>\n        <p>${rtcDateValue}</p>\n    </entry>\n`;
             xml += `    <entry/>\n`;
-            xml += `    <entry outputclass="Line_of_Business">\n        <p>Technology</p>\n    </entry>\n`;
             xml += `    <entry outputclass="Sub_Process">\n        <p>Not applicable</p>\n    </entry>\n`;
             xml += `</row>`;
 
@@ -1174,4 +1251,4 @@
     <script data-goatcounter="https://wnv-counter.goatcounter.com/count"
             async src="//gc.zgo.at/count.js"></script>
 </body>
-</html> 
+</html>

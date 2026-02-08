@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favicon Preview - WING</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234CAF50'/><stop offset='50%25' stop-color='%233498db'/><stop offset='100%25' stop-color='%239b59b6'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='70' font-family='Arial,sans-serif' font-size='55' font-weight='bold' text-anchor='middle' fill='white'>W</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 2.5rem;
+            font-size: 1rem;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .preview-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .preview-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .favicon-sizes {
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .favicon-size {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .favicon-size span {
+            font-size: 11px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .card-label {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .card-page {
+            font-size: 0.82rem;
+            color: #999;
+            margin-bottom: 16px;
+        }
+
+        .card-colors {
+            display: flex;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .color-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+
+        .tab-preview {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f1f3f5;
+            border-radius: 8px 8px 0 0;
+            padding: 8px 14px;
+            margin-top: 16px;
+            width: 100%;
+            max-width: 260px;
+        }
+
+        .tab-preview svg {
+            flex-shrink: 0;
+        }
+
+        .tab-title {
+            font-size: 12px;
+            color: #495057;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tab-close {
+            margin-left: auto;
+            color: #adb5bd;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 2.5rem;
+            text-align: center;
+            width: 100%;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            .preview-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Favicon Preview</h1>
+        <p class="subtitle">All favicons used across the WING application</p>
+
+        <div class="preview-grid">
+
+            <!-- Landing Page -->
+            <div class="preview-card">
+                <div class="favicon-sizes">
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="16" height="16">
+                            <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4CAF50"/><stop offset="50%" stop-color="#3498db"/><stop offset="100%" stop-color="#9b59b6"/></linearGradient></defs>
+                            <rect width="100" height="100" rx="22" fill="url(#g1)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">W</text>
+                        </svg>
+                        <span>16px</span>
+                    </div>
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="32" height="32">
+                            <defs><linearGradient id="g1b" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4CAF50"/><stop offset="50%" stop-color="#3498db"/><stop offset="100%" stop-color="#9b59b6"/></linearGradient></defs>
+                            <rect width="100" height="100" rx="22" fill="url(#g1b)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">W</text>
+                        </svg>
+                        <span>32px</span>
+                    </div>
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="64" height="64">
+                            <defs><linearGradient id="g1c" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4CAF50"/><stop offset="50%" stop-color="#3498db"/><stop offset="100%" stop-color="#9b59b6"/></linearGradient></defs>
+                            <rect width="100" height="100" rx="22" fill="url(#g1c)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">W</text>
+                        </svg>
+                        <span>64px</span>
+                    </div>
+                </div>
+                <div class="card-label">Landing Page</div>
+                <div class="card-page">index.html</div>
+                <div class="card-colors">
+                    <div class="color-dot" style="background: #4CAF50;" title="#4CAF50"></div>
+                    <div class="color-dot" style="background: #3498db;" title="#3498db"></div>
+                    <div class="color-dot" style="background: #9b59b6;" title="#9b59b6"></div>
+                </div>
+                <div class="tab-preview">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="16" height="16">
+                        <defs><linearGradient id="t1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4CAF50"/><stop offset="50%" stop-color="#3498db"/><stop offset="100%" stop-color="#9b59b6"/></linearGradient></defs>
+                        <rect width="100" height="100" rx="22" fill="url(#t1)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">W</text>
+                    </svg>
+                    <span class="tab-title">What's New Entry Creator</span>
+                    <span class="tab-close">&times;</span>
+                </div>
+            </div>
+
+            <!-- HANA Cloud -->
+            <div class="preview-card">
+                <div class="favicon-sizes">
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="16" height="16">
+                            <defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4CAF50"/><stop offset="100%" stop-color="#2E7D32"/></linearGradient></defs>
+                            <rect width="100" height="100" rx="22" fill="url(#g2)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">H</text>
+                        </svg>
+                        <span>16px</span>
+                    </div>
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="32" height="32">
+                            <defs><linearGradient id="g2b" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4CAF50"/><stop offset="100%" stop-color="#2E7D32"/></linearGradient></defs>
+                            <rect width="100" height="100" rx="22" fill="url(#g2b)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">H</text>
+                        </svg>
+                        <span>32px</span>
+                    </div>
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="64" height="64">
+                            <defs><linearGradient id="g2c" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4CAF50"/><stop offset="100%" stop-color="#2E7D32"/></linearGradient></defs>
+                            <rect width="100" height="100" rx="22" fill="url(#g2c)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">H</text>
+                        </svg>
+                        <span>64px</span>
+                    </div>
+                </div>
+                <div class="card-label">HANA Cloud</div>
+                <div class="card-page">HDB_WNV.html</div>
+                <div class="card-colors">
+                    <div class="color-dot" style="background: #4CAF50;" title="#4CAF50"></div>
+                    <div class="color-dot" style="background: #2E7D32;" title="#2E7D32"></div>
+                </div>
+                <div class="tab-preview">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="16" height="16">
+                        <defs><linearGradient id="t2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4CAF50"/><stop offset="100%" stop-color="#2E7D32"/></linearGradient></defs>
+                        <rect width="100" height="100" rx="22" fill="url(#t2)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">H</text>
+                    </svg>
+                    <span class="tab-title">SAP HANA What's New XML Generator</span>
+                    <span class="tab-close">&times;</span>
+                </div>
+            </div>
+
+            <!-- BAS -->
+            <div class="preview-card">
+                <div class="favicon-sizes">
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="16" height="16">
+                            <defs><linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3498db"/><stop offset="100%" stop-color="#1a5276"/></linearGradient></defs>
+                            <rect width="100" height="100" rx="22" fill="url(#g3)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">B</text>
+                        </svg>
+                        <span>16px</span>
+                    </div>
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="32" height="32">
+                            <defs><linearGradient id="g3b" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3498db"/><stop offset="100%" stop-color="#1a5276"/></linearGradient></defs>
+                            <rect width="100" height="100" rx="22" fill="url(#g3b)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">B</text>
+                        </svg>
+                        <span>32px</span>
+                    </div>
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="64" height="64">
+                            <defs><linearGradient id="g3c" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3498db"/><stop offset="100%" stop-color="#1a5276"/></linearGradient></defs>
+                            <rect width="100" height="100" rx="22" fill="url(#g3c)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">B</text>
+                        </svg>
+                        <span>64px</span>
+                    </div>
+                </div>
+                <div class="card-label">Business Application Studio</div>
+                <div class="card-page">BAS_WNV.html</div>
+                <div class="card-colors">
+                    <div class="color-dot" style="background: #3498db;" title="#3498db"></div>
+                    <div class="color-dot" style="background: #1a5276;" title="#1a5276"></div>
+                </div>
+                <div class="tab-preview">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="16" height="16">
+                        <defs><linearGradient id="t3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3498db"/><stop offset="100%" stop-color="#1a5276"/></linearGradient></defs>
+                        <rect width="100" height="100" rx="22" fill="url(#t3)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">B</text>
+                    </svg>
+                    <span class="tab-title">BAS What's New XML Code Generator</span>
+                    <span class="tab-close">&times;</span>
+                </div>
+            </div>
+
+            <!-- Tooling -->
+            <div class="preview-card">
+                <div class="favicon-sizes">
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="16" height="16">
+                            <defs><linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#9b59b6"/><stop offset="100%" stop-color="#6c3483"/></linearGradient></defs>
+                            <rect width="100" height="100" rx="22" fill="url(#g4)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">T</text>
+                        </svg>
+                        <span>16px</span>
+                    </div>
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="32" height="32">
+                            <defs><linearGradient id="g4b" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#9b59b6"/><stop offset="100%" stop-color="#6c3483"/></linearGradient></defs>
+                            <rect width="100" height="100" rx="22" fill="url(#g4b)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">T</text>
+                        </svg>
+                        <span>32px</span>
+                    </div>
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="64" height="64">
+                            <defs><linearGradient id="g4c" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#9b59b6"/><stop offset="100%" stop-color="#6c3483"/></linearGradient></defs>
+                            <rect width="100" height="100" rx="22" fill="url(#g4c)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">T</text>
+                        </svg>
+                        <span>64px</span>
+                    </div>
+                </div>
+                <div class="card-label">SAP HANA Tooling</div>
+                <div class="card-page">TOOLING_WNV.html</div>
+                <div class="card-colors">
+                    <div class="color-dot" style="background: #9b59b6;" title="#9b59b6"></div>
+                    <div class="color-dot" style="background: #6c3483;" title="#6c3483"></div>
+                </div>
+                <div class="tab-preview">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="16" height="16">
+                        <defs><linearGradient id="t4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#9b59b6"/><stop offset="100%" stop-color="#6c3483"/></linearGradient></defs>
+                        <rect width="100" height="100" rx="22" fill="url(#t4)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">T</text>
+                    </svg>
+                    <span class="tab-title">SAP HANA What's New XML Generator</span>
+                    <span class="tab-close">&times;</span>
+                </div>
+            </div>
+
+            <!-- Unified -->
+            <div class="preview-card">
+                <div class="favicon-sizes">
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="16" height="16">
+                            <defs><linearGradient id="g5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4CAF50"/><stop offset="50%" stop-color="#3498db"/><stop offset="100%" stop-color="#9b59b6"/></linearGradient></defs>
+                            <rect width="100" height="100" rx="22" fill="url(#g5)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">U</text>
+                        </svg>
+                        <span>16px</span>
+                    </div>
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="32" height="32">
+                            <defs><linearGradient id="g5b" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4CAF50"/><stop offset="50%" stop-color="#3498db"/><stop offset="100%" stop-color="#9b59b6"/></linearGradient></defs>
+                            <rect width="100" height="100" rx="22" fill="url(#g5b)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">U</text>
+                        </svg>
+                        <span>32px</span>
+                    </div>
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="64" height="64">
+                            <defs><linearGradient id="g5c" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4CAF50"/><stop offset="50%" stop-color="#3498db"/><stop offset="100%" stop-color="#9b59b6"/></linearGradient></defs>
+                            <rect width="100" height="100" rx="22" fill="url(#g5c)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">U</text>
+                        </svg>
+                        <span>64px</span>
+                    </div>
+                </div>
+                <div class="card-label">Unified (HANA Cloud & BAS)</div>
+                <div class="card-page">UNIFIED_WNV.html</div>
+                <div class="card-colors">
+                    <div class="color-dot" style="background: #4CAF50;" title="#4CAF50"></div>
+                    <div class="color-dot" style="background: #3498db;" title="#3498db"></div>
+                    <div class="color-dot" style="background: #9b59b6;" title="#9b59b6"></div>
+                </div>
+                <div class="tab-preview">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="16" height="16">
+                        <defs><linearGradient id="t5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4CAF50"/><stop offset="50%" stop-color="#3498db"/><stop offset="100%" stop-color="#9b59b6"/></linearGradient></defs>
+                        <rect width="100" height="100" rx="22" fill="url(#t5)"/><text x="50" y="70" font-family="Arial,sans-serif" font-size="55" font-weight="bold" text-anchor="middle" fill="white">U</text>
+                    </svg>
+                    <span class="tab-title">Unified What's New XML Generator</span>
+                    <span class="tab-close">&times;</span>
+                </div>
+            </div>
+
+            <!-- Schedule Tracker -->
+            <div class="preview-card">
+                <div class="favicon-sizes">
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="16" height="16">
+                            <defs><linearGradient id="g6" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#667eea"/><stop offset="50%" stop-color="#764ba2"/><stop offset="100%" stop-color="#f093fb"/></linearGradient></defs>
+                            <rect x="15" y="25" width="70" height="55" rx="8" fill="url(#g6)" stroke="white" stroke-width="3"/><rect x="25" y="15" width="6" height="20" rx="3" fill="white"/><rect x="45" y="15" width="6" height="20" rx="3" fill="white"/><rect x="65" y="15" width="6" height="20" rx="3" fill="white"/><line x1="25" y1="35" x2="75" y2="35" stroke="white" stroke-width="2"/><circle cx="35" cy="45" r="3" fill="white"/><circle cx="50" cy="45" r="3" fill="white"/><circle cx="65" cy="45" r="3" fill="white"/><circle cx="35" cy="55" r="3" fill="white"/><circle cx="50" cy="55" r="3" fill="white"/><circle cx="65" cy="55" r="3" fill="white"/><circle cx="35" cy="65" r="3" fill="white"/><circle cx="50" cy="65" r="3" fill="white"/>
+                        </svg>
+                        <span>16px</span>
+                    </div>
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="32" height="32">
+                            <defs><linearGradient id="g6b" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#667eea"/><stop offset="50%" stop-color="#764ba2"/><stop offset="100%" stop-color="#f093fb"/></linearGradient></defs>
+                            <rect x="15" y="25" width="70" height="55" rx="8" fill="url(#g6b)" stroke="white" stroke-width="3"/><rect x="25" y="15" width="6" height="20" rx="3" fill="white"/><rect x="45" y="15" width="6" height="20" rx="3" fill="white"/><rect x="65" y="15" width="6" height="20" rx="3" fill="white"/><line x1="25" y1="35" x2="75" y2="35" stroke="white" stroke-width="2"/><circle cx="35" cy="45" r="3" fill="white"/><circle cx="50" cy="45" r="3" fill="white"/><circle cx="65" cy="45" r="3" fill="white"/><circle cx="35" cy="55" r="3" fill="white"/><circle cx="50" cy="55" r="3" fill="white"/><circle cx="65" cy="55" r="3" fill="white"/><circle cx="35" cy="65" r="3" fill="white"/><circle cx="50" cy="65" r="3" fill="white"/>
+                        </svg>
+                        <span>32px</span>
+                    </div>
+                    <div class="favicon-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="64" height="64">
+                            <defs><linearGradient id="g6c" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#667eea"/><stop offset="50%" stop-color="#764ba2"/><stop offset="100%" stop-color="#f093fb"/></linearGradient></defs>
+                            <rect x="15" y="25" width="70" height="55" rx="8" fill="url(#g6c)" stroke="white" stroke-width="3"/><rect x="25" y="15" width="6" height="20" rx="3" fill="white"/><rect x="45" y="15" width="6" height="20" rx="3" fill="white"/><rect x="65" y="15" width="6" height="20" rx="3" fill="white"/><line x1="25" y1="35" x2="75" y2="35" stroke="white" stroke-width="2"/><circle cx="35" cy="45" r="3" fill="white"/><circle cx="50" cy="45" r="3" fill="white"/><circle cx="65" cy="45" r="3" fill="white"/><circle cx="35" cy="55" r="3" fill="white"/><circle cx="50" cy="55" r="3" fill="white"/><circle cx="65" cy="55" r="3" fill="white"/><circle cx="35" cy="65" r="3" fill="white"/><circle cx="50" cy="65" r="3" fill="white"/>
+                        </svg>
+                        <span>64px</span>
+                    </div>
+                </div>
+                <div class="card-label">Schedule Progress Tracker</div>
+                <div class="card-page">schedule_progress_tracker.html</div>
+                <div class="card-colors">
+                    <div class="color-dot" style="background: #667eea;" title="#667eea"></div>
+                    <div class="color-dot" style="background: #764ba2;" title="#764ba2"></div>
+                    <div class="color-dot" style="background: #f093fb;" title="#f093fb"></div>
+                </div>
+                <div class="tab-preview">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="16" height="16">
+                        <defs><linearGradient id="t6" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#667eea"/><stop offset="50%" stop-color="#764ba2"/><stop offset="100%" stop-color="#f093fb"/></linearGradient></defs>
+                        <rect x="15" y="25" width="70" height="55" rx="8" fill="url(#t6)" stroke="white" stroke-width="3"/><rect x="25" y="15" width="6" height="20" rx="3" fill="white"/><rect x="45" y="15" width="6" height="20" rx="3" fill="white"/><rect x="65" y="15" width="6" height="20" rx="3" fill="white"/><line x1="25" y1="35" x2="75" y2="35" stroke="white" stroke-width="2"/><circle cx="35" cy="45" r="3" fill="white"/><circle cx="50" cy="45" r="3" fill="white"/><circle cx="65" cy="45" r="3" fill="white"/><circle cx="35" cy="55" r="3" fill="white"/><circle cx="50" cy="55" r="3" fill="white"/><circle cx="65" cy="55" r="3" fill="white"/><circle cx="35" cy="65" r="3" fill="white"/><circle cx="50" cy="65" r="3" fill="white"/>
+                    </svg>
+                    <span class="tab-title">Schedule Progress Tracker</span>
+                    <span class="tab-close">&times;</span>
+                </div>
+            </div>
+
+        </div>
+
+        <a href="index.html" class="back-link">&larr; Back to What's New Entry Creator</a>
+    </div>
+</body>
+</html>

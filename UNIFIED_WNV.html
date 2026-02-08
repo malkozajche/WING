@@ -1816,12 +1816,23 @@
             textInput.type = 'text';
             textInput.className = 'ref-link-text';
             textInput.placeholder = 'Topic title (e.g. Creating HDI Containers)';
-            
+
             const urlInput = document.createElement('input');
             urlInput.type = 'text';
             urlInput.className = 'ref-link-url';
             urlInput.placeholder = 'Link URL (e.g. https://help.sap.com/docs/...)';
-            
+
+            // Allow pasting "topic title\nURL" into the title field to fill both fields
+            textInput.addEventListener('paste', function(e) {
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                const lines = pastedText.split(/\r?\n/).filter(line => line.trim() !== '');
+                if (lines.length >= 2) {
+                    e.preventDefault();
+                    textInput.value = lines[0].trim();
+                    urlInput.value = lines[1].trim();
+                }
+            });
+
             const removeBtn = document.createElement('button');
             removeBtn.textContent = 'Remove';
             removeBtn.className = 'remove-btn';
@@ -1831,7 +1842,7 @@
                     addReferenceLink();
                 }
             };
-            
+
             inputsDiv.appendChild(textInput);
             inputsDiv.appendChild(urlInput);
             div.appendChild(inputsDiv);

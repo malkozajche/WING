@@ -55,8 +55,6 @@ Locate and open the relevant What's New (WNV) topic in IXIASOFT CCMS.
 
 Click into the **first cell** of the table body.
 
-![Position your cursor in the first cell](screenshot_cursor_position.png)
-
 ### Step 10: Switch to XML View
 
 In the IXIASOFT editor toolbar, switch from **Author View** to **XML View**.

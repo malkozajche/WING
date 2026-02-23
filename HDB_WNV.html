@@ -801,7 +801,7 @@
                 <button onclick="copyToClipboard()">Copy to Clipboard</button>
             </div>
             <div class="divider"></div>
-            <a href="https://help.sap.com/docs/hana-cloud/f32bc8f64284414b91626b0166e610f3/9a1bdaac90a04c5ea39519c416a97f30.html?locale=en-US&state=DRAFT&version=dev" 
+            <a href="https://help.sap.com/docs/hana-cloud/what-s-new-in-sap-hana-cloud-all-internal/sap-hana-cloud-sap-hana-database-administration-and-monitoring-03782f93ecc9480eabc113a472354964?state=DRAFT"
                target="_blank" 
                class="add-to-wnv-btn"
                onclick="copyToClipboardAndRedirect(event)">
@@ -914,6 +914,13 @@
         // Initialize observer for mainParagraph
         setupTagObserver('mainParagraph');
 
+        // Force plain text paste in description field
+        document.getElementById('mainParagraph').addEventListener('paste', function(e) {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+            document.execCommand('insertText', false, text);
+        });
+
         let tagPairCounter = 0;
 
         function formatText(elementId, tag) {
@@ -985,8 +992,13 @@
             content = content.replace(/<br\s*\/?>/gi, ' ');
             content = content.replace(/<div>/gi, ' ');
             content = content.replace(/<\/div>/gi, '');
+            content = content.replace(/<p[^>]*>/gi, ' ');
+            content = content.replace(/<\/p>/gi, '');
+            // Strip any remaining HTML tags except DITA tags (codeph, uicontrol)
+            content = content.replace(/<(?!\/?(?:codeph|uicontrol)\b)[^>]+>/gi, '');
             content = content.replace(/&nbsp;/g, ' ');
             content = content.replace(/\u200B/g, '');
+            content = content.replace(/\s{2,}/g, ' ');
             return content.trim();
         }
 

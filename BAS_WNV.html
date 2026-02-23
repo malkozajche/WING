@@ -734,6 +734,13 @@
 
             // Initialize observer for description
             setupTagObserver('description');
+
+            // Force plain text paste in description field
+            document.getElementById('description').addEventListener('paste', function(e) {
+                e.preventDefault();
+                const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+                document.execCommand('insertText', false, text);
+            });
         };
 
         function formatText(elementId, tag) {
@@ -805,8 +812,13 @@
             content = content.replace(/<br\s*\/?>/gi, ' ');
             content = content.replace(/<div>/gi, ' ');
             content = content.replace(/<\/div>/gi, '');
+            content = content.replace(/<p[^>]*>/gi, ' ');
+            content = content.replace(/<\/p>/gi, '');
+            // Strip any remaining HTML tags except DITA tags (codeph, uicontrol)
+            content = content.replace(/<(?!\/?(?:codeph|uicontrol)\b)[^>]+>/gi, '');
             content = content.replace(/&nbsp;/g, ' ');
             content = content.replace(/\u200B/g, '');
+            content = content.replace(/\s{2,}/g, ' ');
             return content.trim();
         }
 

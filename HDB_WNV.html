@@ -257,6 +257,19 @@
             .controls button {
                 width: 100%;
             }
+
+            .jira-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .jira-actions {
+                justify-content: center;
+            }
+
+            .jira-links {
+                justify-content: center;
+            }
         }
 
         #featureInput {
@@ -581,6 +594,192 @@
             color: #1e40af;
             border: 1px solid #93c5fd;
         }
+
+        /* JIRA Section Styles */
+        .jira-section {
+            background: linear-gradient(135deg, #fff8dc 0%, #ffeaa7 100%);
+            border: 2px solid #fdcb6e;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(253, 203, 110, 0.2);
+        }
+
+        .jira-section h2 {
+            color: #d63031;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .jira-section h2::before {
+            content: "🎯";
+            font-size: 1.2em;
+        }
+
+        .jira-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .jira-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .jira-btn {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .jira-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .jira-btn.generate-comment {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+        }
+
+        .jira-btn.copy-comment {
+            background: linear-gradient(135deg, #0984e3 0%, #74b9ff 100%);
+        }
+
+        .jira-btn.add-to-jira {
+            background: linear-gradient(135deg, #d63031 0%, #fd79a8 100%);
+        }
+
+        .jira-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .jira-links {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .jira-link-btn {
+            background: linear-gradient(135deg, #e17055 0%, #fd79a8 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+        }
+
+        .jira-link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .jira-link-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .jira-comment-output {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .jira-comment-output label {
+            margin-bottom: 1rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .comment-editor {
+            width: 100%;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 1rem;
+            font-family: monospace;
+            color: #2c3e50;
+            line-height: 1.4;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.3s ease;
+        }
+
+        .comment-editor:focus {
+            outline: none;
+            border-color: #6c5ce7;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+            background: #ffffff;
+        }
+
+        .comment-editor.has-content {
+            background: #ffffff;
+            border-color: #28a745;
+        }
+
+        .jira-message {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 6px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            animation: slideDown 0.3s ease;
+        }
+
+        .jira-message.error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .message-content {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .message-text {
+            font-weight: 500;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -818,6 +1017,43 @@
             <div class="copy-indicator" id="copyIndicator">Copied to clipboard!</div>
             <div class="copy-indicator" id="generateIndicator">XML Generated!</div>
         </div>
+
+        <!-- JIRA Comment Section -->
+        <div class="jira-section">
+            <h2>JIRA Comment Generator</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Generate formatted JIRA comments with documentation and What's New links using the reference links from above</p>
+
+            <div class="jira-controls">
+                <div class="jira-actions">
+                    <button class="jira-btn generate-comment" onclick="generateJiraComment()">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
+                        </svg>
+                        Generate Comment
+                    </button>
+                    <button class="jira-btn copy-comment" onclick="copyJiraComment()">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                        </svg>
+                        Copy Comment
+                    </button>
+                </div>
+                <div class="jira-links" id="jiraLinksContainer">
+                    <!-- Dynamic JIRA links will be inserted here -->
+                </div>
+            </div>
+
+            <div class="jira-message" id="jiraMessage" style="display: none;">
+                <div class="message-content">
+                    <span class="message-text" id="jiraMessageText"></span>
+                </div>
+            </div>
+
+            <div class="jira-comment-output">
+                <label>Generated JIRA Comment:</label>
+                <textarea class="comment-editor" id="jiraCommentOutput" rows="8" placeholder="Generate a comment to see it here, then edit as needed..."></textarea>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
@@ -881,6 +1117,9 @@
 
         // Add initial reference link
         addReferenceLink();
+
+        // Watch JIRA IDs input for dynamic link generation
+        document.getElementById('jiraIds').addEventListener('input', updateJiraLinks);
 
         // Initialize QRC defaults
         initializeQRCDefaults();
@@ -1311,6 +1550,111 @@
             } else {
                 event.preventDefault();
                 alert('Please generate XML content first before adding to What\'s New Viewer.');
+            }
+        }
+
+        // JIRA Comment Functions
+        function updateJiraLinks() {
+            const jiraIds = document.getElementById('jiraIds').value;
+            const container = document.getElementById('jiraLinksContainer');
+
+            container.innerHTML = '';
+
+            if (jiraIds.trim()) {
+                const ids = jiraIds.split(',').map(id => id.trim()).filter(id => id);
+
+                ids.forEach(id => {
+                    const link = document.createElement('a');
+                    link.href = `https://jira.tools.sap/browse/${id}`;
+                    link.target = '_blank';
+                    link.className = 'jira-link-btn';
+                    link.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+                        </svg>
+                        Add to JIRA ${id}
+                    `;
+                    container.appendChild(link);
+                });
+            }
+        }
+
+        function showJiraMessage(message, isError = false) {
+            const messageDiv = document.getElementById('jiraMessage');
+            const messageText = document.getElementById('jiraMessageText');
+
+            messageText.textContent = message;
+            messageDiv.className = isError ? 'jira-message error' : 'jira-message';
+            messageDiv.style.display = 'block';
+
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        function generateJiraComment() {
+            let comment = '';
+
+            // Get reference links from the form above
+            const refLinks = Array.from(document.getElementsByClassName('reference-link-item')).map(item => {
+                const inputs = item.getElementsByTagName('input');
+                return {
+                    text: inputs[0].value.trim(),
+                    url: inputs[1].value.trim()
+                };
+            }).filter(link => link.text && link.url);
+
+            // Documentation section - always show header
+            comment += 'Added documentation:\n';
+            if (refLinks.length > 0) {
+                refLinks.forEach(link => {
+                    comment += `${link.text}: ${link.url}\n`;
+                });
+            } else {
+                comment += '[Add your documentation links here]\n';
+            }
+            comment += '\n';
+
+            // What's New entries section
+            const hanaWnvUrl = 'https://help.sap.com/docs/hana-cloud/f32bc8f64284414b91626b0166e610f3/b2de621c8ed74056add2e0103af66c40.html?state=DRAFT&version=dev';
+
+            comment += 'Added What\'s New entry:\n';
+            comment += `• HANA Cloud: ${hanaWnvUrl}`;
+
+            // Display the generated comment
+            const output = document.getElementById('jiraCommentOutput');
+            output.value = comment;
+            output.classList.add('has-content');
+        }
+
+        function copyJiraComment() {
+            const commentOutput = document.getElementById('jiraCommentOutput');
+            const comment = commentOutput.value.trim();
+
+            if (comment && comment !== '') {
+                navigator.clipboard.writeText(comment)
+                    .then(() => {
+                        showJiraMessage('✅ Comment copied to clipboard! Ready to paste in JIRA.');
+
+                        // Visual feedback on textarea
+                        const originalBackground = commentOutput.style.background;
+                        const originalBorderColor = commentOutput.style.borderColor;
+
+                        commentOutput.style.background = '#d4edda';
+                        commentOutput.style.borderColor = '#c3e6cb';
+
+                        setTimeout(() => {
+                            commentOutput.style.background = originalBackground || '#ffffff';
+                            commentOutput.style.borderColor = originalBorderColor || '#28a745';
+                        }, 1500);
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy comment: ', err);
+                        showJiraMessage('❌ Failed to copy comment to clipboard', true);
+                    });
+            } else {
+                showJiraMessage('⚠️ Please generate a comment first', true);
             }
         }
     </script>

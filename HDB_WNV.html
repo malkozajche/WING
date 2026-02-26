@@ -885,6 +885,7 @@
                         <option value="Spatial">Spatial</option>
                         <option value="SQL">SQL</option>
                         <option value="SQL on Files">SQL on Files</option>
+                        <option value="SQLScript">SQLScript</option>
                         <option value="User Management">User Management</option>
                         <option value="other">Other...</option>
                     </select>
@@ -1609,18 +1610,19 @@
             comment += 'Added documentation:\n';
             if (refLinks.length > 0) {
                 refLinks.forEach(link => {
-                    comment += `${link.text}: ${link.url}\n`;
+                    const draftUrl = link.url.includes('?') ? link.url + '&state=DRAFT' : link.url + '?state=DRAFT';
+                    comment += `[${link.text}|${draftUrl}]\n`;
                 });
             } else {
                 comment += '[Add your documentation links here]\n';
             }
             comment += '\n';
 
-            // What's New entries section
-            const hanaWnvUrl = 'https://help.sap.com/docs/hana-cloud/f32bc8f64284414b91626b0166e610f3/b2de621c8ed74056add2e0103af66c40.html?state=DRAFT&version=dev';
+            // What's New entries section - uses same URL as "Add to What's New Viewer" button
+            const hanaWnvUrl = 'https://help.sap.com/docs/hana-cloud/what-s-new-in-sap-hana-cloud-all-internal/sap-hana-cloud-sap-hana-database-administration-and-monitoring-03782f93ecc9480eabc113a472354964?state=DRAFT';
 
             comment += 'Added What\'s New entry:\n';
-            comment += `• HANA Cloud: ${hanaWnvUrl}`;
+            comment += `• [HANA Cloud|${hanaWnvUrl}]`;
 
             // Display the generated comment
             const output = document.getElementById('jiraCommentOutput');

@@ -1138,6 +1138,7 @@
                                 <option value="Authentication">Authentication</option>
                                 <option value="Authorization">Authorization</option>
                                 <option value="SAP HANA Development Tooling" selected>SAP HANA Development Tooling</option>
+                                <option value="SQLScript">SQLScript</option>
                                 <option value="other">Other...</option>
                             </select>
                             <input type="text" id="hdbCategoryInput" class="entry-input" placeholder="Enter custom value">
@@ -2184,20 +2185,21 @@
             comment += 'Added documentation:\n';
             if (refLinks.length > 0) {
                 refLinks.forEach(link => {
-                    comment += `${link.text}: ${link.url}\n`;
+                    const draftUrl = link.url.includes('?') ? link.url + '&state=DRAFT' : link.url + '?state=DRAFT';
+                    comment += `[${link.text}|${draftUrl}]\n`;
                 });
             } else {
                 comment += '[Add your documentation links here]\n';
             }
             comment += '\n';
-            
-            // What's New entries section
-            const hanaWnvUrl = 'https://help.sap.com/docs/hana-cloud/f32bc8f64284414b91626b0166e610f3/b2de621c8ed74056add2e0103af66c40.html?state=DRAFT&version=dev';
+
+            // What's New entries section - uses same URLs as "Add to What's New Viewer" buttons
+            const hanaWnvUrl = 'https://help.sap.com/docs/hana-cloud/what-s-new-in-sap-hana-cloud-all-internal/sap-hana-cloud-sap-hana-database-development-e3001aa753fd4deabe7887acbae9ef31?state=DRAFT';
             const basWnvUrl = 'https://help.sap.com/docs/help/27447f9c897a48c2939a7fd576657cc9/ed631d4ee2214e9f932b03d40b2c7e41.html?state=DRAFT';
-            
+
             comment += 'Added What\'s New entries:\n';
-            comment += `• HANA Cloud: ${hanaWnvUrl}\n`;
-            comment += `• Business Application Studio: ${basWnvUrl}`;
+            comment += `• [HANA Cloud|${hanaWnvUrl}]\n`;
+            comment += `• [Business Application Studio|${basWnvUrl}]`;
             
             // Display the generated comment
             const output = document.getElementById('jiraCommentOutput');

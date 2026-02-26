@@ -1610,7 +1610,7 @@
             comment += 'Added documentation:\n';
             if (refLinks.length > 0) {
                 refLinks.forEach(link => {
-                    comment += `${link.text}: ${link.url}\n`;
+                    comment += `[${link.text}|${link.url}]\n`;
                 });
             } else {
                 comment += '[Add your documentation links here]\n';
@@ -1618,10 +1618,10 @@
             comment += '\n';
 
             // What's New entries section
-            const hanaWnvUrl = 'https://help.sap.com/docs/hana-cloud/f32bc8f64284414b91626b0166e610f3/b2de621c8ed74056add2e0103af66c40.html?state=DRAFT&version=dev';
+            const hanaWnvUrl = 'https://help.sap.com/docs/HANA_CLOUD_DATABASE/c1d3f60099654ecfb3fe36ac93c121bb/ca6a99bbfcd94be9ab8020a86f43caae.html?locale=en-US&state=DRAFT';
 
             comment += 'Added What\'s New entry:\n';
-            comment += `• HANA Cloud: ${hanaWnvUrl}`;
+            comment += `• [HANA Cloud|${hanaWnvUrl}]`;
 
             // Display the generated comment
             const output = document.getElementById('jiraCommentOutput');

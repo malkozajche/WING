@@ -2185,16 +2185,17 @@
             comment += 'Added documentation:\n';
             if (refLinks.length > 0) {
                 refLinks.forEach(link => {
-                    comment += `[${link.text}|${link.url}]\n`;
+                    const draftUrl = link.url.includes('?') ? link.url + '&state=DRAFT' : link.url + '?state=DRAFT';
+                    comment += `[${link.text}|${draftUrl}]\n`;
                 });
             } else {
                 comment += '[Add your documentation links here]\n';
             }
             comment += '\n';
 
-            // What's New entries section
-            const hanaWnvUrl = 'https://help.sap.com/docs/HANA_CLOUD_DATABASE/c1d3f60099654ecfb3fe36ac93c121bb/ca6a99bbfcd94be9ab8020a86f43caae.html?locale=en-US&state=DRAFT';
-            const basWnvUrl = 'https://help.sap.com/docs/hana-cloud/what-s-new-in-sap-hana-cloud-all-internal/sap-hana-cloud-sap-hana-database-development-e3001aa753fd4deabe7887acbae9ef31?state=DRAFT';
+            // What's New entries section - uses same URLs as "Add to What's New Viewer" buttons
+            const hanaWnvUrl = 'https://help.sap.com/docs/hana-cloud/what-s-new-in-sap-hana-cloud-all-internal/sap-hana-cloud-sap-hana-database-development-e3001aa753fd4deabe7887acbae9ef31?state=DRAFT';
+            const basWnvUrl = 'https://help.sap.com/docs/help/27447f9c897a48c2939a7fd576657cc9/ed631d4ee2214e9f932b03d40b2c7e41.html?state=DRAFT';
 
             comment += 'Added What\'s New entries:\n';
             comment += `• [HANA Cloud|${hanaWnvUrl}]\n`;

@@ -2049,13 +2049,10 @@
         <ul>
             ${listItems.map(item => `            <li>${item}</li>`).join('\n')}
         </ul>` : ''}
-        ${refLinks.length > 0 ? `
-        <p>
-            See${refLinks.length === 1 ? 
-            `\n            <xref format="html" href="${refLinks[0].url}" scope="external">${refLinks[0].text}</xref>.` :
-            `:\n        </p>\n        <ul>\n${refLinks.map(link => 
-            `            <li><xref format="html" href="${link.url}" scope="external">${link.text}</xref></li>`).join('\n')}\n        </ul>`}
-        </p>` : ''}
+        ${refLinks.length > 0 ? (refLinks.length === 1 ?
+            `<p>\n            See\n            <xref format="html" href="${refLinks[0].url}" scope="external">${refLinks[0].text}</xref>.\n        </p>` :
+            `<p>\n            See:\n        </p>\n        <ul>\n${refLinks.map(link =>
+            `            <li><xref format="html" href="${link.url}" scope="external">${link.text}</xref></li>`).join('\n')}\n        </ul>`) : ''}
         ${jiraIds || authorInitials ? 
             (jiraIds ? jiraIds.split(',').map(id => {
                 const comment = authorInitials ? `${id.trim()} - ${authorInitials}` : id.trim();

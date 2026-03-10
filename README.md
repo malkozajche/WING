@@ -1,6 +1,46 @@
 # WING
 What's New Viewer XML Generator
 
+## Overview
+
+**WING** (What's New Viewer XML Generator) is a suite of browser-based tools for SAP documentation teams. It generates correctly structured XML `<row>` elements for What's New viewer topics, ready to paste directly into IXIASOFT CCMS — no installation required.
+
+### Key Features
+
+- Runs entirely in the browser as standalone HTML files
+- Supports four documentation areas: HANA Cloud, BAS, SAP HANA Tooling, and a unified HANA Cloud + BAS entry
+- Validates required fields and formats XML output automatically
+- One-click copy to clipboard
+
+### Tools at a Glance
+
+| Tool | File | Description |
+|---|---|---|
+| Landing Page | `index.html` | Entry point with links to all generators |
+| HANA Cloud Generator | `HDB_WNV.html` | XML for SAP HANA Cloud What's New entries |
+| BAS Generator | `BAS_WNV.html` | XML for SAP Business Application Studio entries |
+| Tooling Generator | `TOOLING_WNV.html` | XML for SAP HANA Tooling entries (optional feature toggle) |
+| Unified Generator | `UNIFIED_WNV.html` | Combined HANA Cloud + BAS entry in one operation |
+
+### Screenshots
+
+**Landing Page**
+![WING Landing Page](screenshots/index.png)
+
+**HANA Cloud Generator**
+![HANA Cloud What's New Generator](screenshots/hdb_wnv.png)
+
+**BAS Generator**
+![BAS What's New Generator](screenshots/bas_wnv.png)
+
+**SAP HANA Tooling Generator**
+![SAP HANA Tooling What's New Generator](screenshots/tooling_wnv.png)
+
+**Unified Generator (HANA Cloud + BAS)**
+![Unified What's New Generator](screenshots/unified_wnv.png)
+
+---
+
 ## How to Add a What's New Entry
 
 ### Step 1: Open the XML What's New Generator

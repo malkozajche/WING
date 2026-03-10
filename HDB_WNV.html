@@ -373,6 +373,101 @@
             fill: currentColor;
         }
 
+        /* Future toggle */
+        .future-toggle-wrapper {
+            margin: 1.25rem 0 0.5rem;
+        }
+
+        .future-toggle-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1.5px solid #d1bfff;
+            background: #f9f5ff;
+            transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+            user-select: none;
+        }
+
+        .future-toggle-label:hover {
+            background: #efe9ff;
+            border-color: #9b59b6;
+            box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.12);
+        }
+
+        .future-toggle-label input[type="checkbox"] {
+            display: none;
+        }
+
+        .future-toggle-track {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            border-radius: 999px;
+            background: #d1d5db;
+            transition: background 0.25s;
+            flex-shrink: 0;
+        }
+
+        .future-toggle-thumb {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.22);
+            transition: transform 0.25s;
+        }
+
+        .future-toggle-label input:checked ~ .future-toggle-track {
+            background: linear-gradient(135deg, #7c3aed, #9b59b6);
+        }
+
+        .future-toggle-label input:checked ~ .future-toggle-track .future-toggle-thumb {
+            transform: translateX(20px);
+        }
+
+        .future-toggle-label input:checked ~ .future-toggle-text {
+            color: #6d28d9;
+        }
+
+        .future-toggle-label input:checked + .future-toggle-track {
+            background: linear-gradient(135deg, #7c3aed, #9b59b6);
+        }
+
+        .future-toggle-label input:checked + .future-toggle-track .future-toggle-thumb {
+            transform: translateX(20px);
+        }
+
+        .future-toggle-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #4b5563;
+            transition: color 0.2s;
+        }
+
+        .future-toggle-text code {
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: #9b59b6;
+            background: #ede9fe;
+            padding: 1px 6px;
+            border-radius: 4px;
+        }
+
+        .future-toggle-label:has(input:checked) {
+            background: #ede9fe;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15), 0 0 12px rgba(124, 58, 237, 0.1);
+        }
+
         .checkbox-group {
             display: flex;
             flex-direction: column;
@@ -994,6 +1089,19 @@
                 <label>Modular Business Process:</label>
                 <input type="text" id="subProcess" value="Not applicable" readonly>
             </div>
+
+            <div class="future-toggle-wrapper">
+                <label class="future-toggle-label">
+                    <input type="checkbox" id="isFuture" onchange="generateXML()">
+                    <div class="future-toggle-track">
+                        <div class="future-toggle-thumb"></div>
+                    </div>
+                    <span class="future-toggle-text">
+                        🛸 Mark as Future
+                        <code>sap_product="future"</code>
+                    </span>
+                </label>
+            </div>
         </form>
 
         <div class="controls">
@@ -1426,7 +1534,9 @@
                 .map(input => input.value)
                 .filter(value => value.trim() !== '');
 
-            let xml = feature.trim() ? `<row feature="${feature}">\n` : `<row>\n`;
+            const isFuture = document.getElementById('isFuture').checked;
+            const futureAttr = isFuture ? ' sap_product="future"' : '';
+            let xml = feature.trim() ? `<row feature="${feature}"${futureAttr}>\n` : `<row${futureAttr}>\n`;
             
             // Standard entries
             const component = document.getElementById('component').value;
